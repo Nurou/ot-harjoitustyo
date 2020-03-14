@@ -17,3 +17,4 @@ The application is implemented with Java, and features:
 [gitlog](https://github.com/Nurou/ot-harjoitustyo/blob/master/laskarit/viikko1/gitlog.txt)
 
 [command line](https://github.com/Nurou/ot-harjoitustyo/blob/master/laskarit/viikko1/kommentorivi.txt)
+local change
