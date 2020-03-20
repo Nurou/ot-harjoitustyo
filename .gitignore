@@ -1,3 +1,11 @@
 /laskarit/viikko2/Maksukortti/nbproject/
 /laskarit/viikko2/Maksukortti/target//laskarit/viikko2/Unicafe/target
 /laskarit/viikko2/Unicafe/nbproject/
+
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
