@@ -4,7 +4,7 @@
 
 The application of common \*software development **concepts** & **methods\*** in the form of a small project.
 
-The application is implemented with Java, and features:
+The application is implemented with Java and features:
 
 - [ ] Design & UML Modeling
 - [ ] Automated Testing
@@ -16,5 +16,12 @@ The application is implemented with Java, and features:
 
 [gitlog](https://github.com/Nurou/ot-harjoitustyo/blob/master/laskarit/viikko1/gitlog.txt)
 
-[command line](https://github.com/Nurou/ot-harjoitustyo/blob/master/laskarit/viikko1/kommentorivi.txt)
-local change
+[CLI](https://github.com/Nurou/ot-harjoitustyo/blob/master/laskarit/viikko1/kommentorivi.txt)
+
+## Week02
+
+[Maksukortti](https://github.com/Nurou/ot-harjoitustyo/blob/master/laskarit/viikko2/Maksukortti)
+
+[Unicafe](https://github.com/Nurou/ot-harjoitustyo/blob/master/laskarit/viikko2/Unicafe)
+
+[Code Coverage](https://github.com/Nurou/ot-harjoitustyo/blob/master/laskarit/viikko2/week2-codecoverage.jpg)
