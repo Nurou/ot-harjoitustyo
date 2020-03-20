@@ -13,7 +13,7 @@ The application comes with a single user role - normal user. A user with equippe
 
 The initial design of the application has 5 views in total.
 
-<img src="https://raw.githubusercontent.com/nurou/ot-harjoitustyo/master/studyTracker/documentaatio/studytracker-uidraft.png" width="750">
+<img src="https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/images/studytracker-uidraft.jpg" width="750">
 
 The image shows the connections between the links.
 
