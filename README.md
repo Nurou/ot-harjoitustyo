@@ -2,13 +2,13 @@
 
 ## Description
 
-The application of common \*software development **concepts** & **methods\*** in the form of a small project.
+The application of common \*software development **concepts** & **methods\*** to a smallish project.
 
-The application is implemented with Java and features:
+It's is implemented in Java and features:
 
-- [ ] Design & UML Modeling
+- [ ] Prototyping and Design & UML Modeling
 - [ ] Automated Testing
-- [ ] User Interface
+- [ ] GUI
 
 ---
 
