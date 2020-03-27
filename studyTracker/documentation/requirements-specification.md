@@ -9,7 +9,7 @@ A student may login and see what courses they have either ongoing, completed, or
 
 The application comes with a single user role - normal user. A user with equipped with more rights may be added later on.
 
-## User-Interface Draft
+## UI Design Draft
 
 The initial design of the application has 5 views in total.
 
