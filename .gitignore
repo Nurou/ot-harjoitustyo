@@ -2,6 +2,8 @@
 /laskarit/viikko2/Maksukortti/target//laskarit/viikko2/Unicafe/target
 /laskarit/viikko2/Unicafe/nbproject/
 
+/studyTracker/nb-configuration.xml
+
 
 .vscode/*
 !.vscode/settings.json
