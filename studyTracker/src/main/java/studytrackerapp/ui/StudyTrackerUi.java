@@ -34,17 +34,31 @@ import javafx.stage.Stage;
 public class StudyTrackerUi extends Application {
 
   /* Constants */
+
   // credentials
   private final int MIN_PASS_LENGTH = 3;
   private final int MIN_NAME_LENGTH = 2;
   private final int MIN_USERNAME_LENGTH = 2;
+
   // dimensions
   private final int CONTAINER_SPACING = 10;
+  private final int CONTAINER_PADDING = 30;
+  private final int FIELD_GROUP_SPACING = 10;
+  private final int FIELD_GROUP_PADDING = 15;
+
+  private final int LOGIN_WIDTH = 700;
+  private final int LOGIN_HEIGHT = 500;
+
+  private final int CREATE_USER_WIDTH = 700;
+  private final int CREATE_USER_HEIGHT = 500;
+
+  // styles
+  private final int BUTTON_PADDING = 10;
 
   /* Application Views */
   private Scene welcomeScene;
   private Scene loginScene;
-  private Scene newUserScene;
+  private Scene createUserScene;
   private Scene profileScene;
   private Scene newCourseScene;
   private Scene couseManagementScene;
@@ -63,14 +77,14 @@ public class StudyTrackerUi extends Application {
 
     System.out.println("Application launched!");
 
-    /* Login Scene */
+    /* LOGIN SCENE */
 
     // containers
-    VBox loginContainer = new VBox(CONTAINER_SPACING); // this is the outer 'wrapper' pane
-    HBox loginFieldGroup = new HBox(CONTAINER_SPACING); // holds all input elements, nested within outer pane
+    VBox loginContainer = new VBox(CONTAINER_SPACING); // this is the outer 'wrapper' box
+    VBox loginFieldGroup = new VBox(FIELD_GROUP_SPACING); // holds all input elements, nested within outer box
 
     // container styling
-    loginContainer.setPadding(new Insets(10));
+    loginContainer.setPadding(new Insets(CONTAINER_PADDING));
 
     // login input fields
     Label usernameLabel = new Label("Username");
@@ -83,9 +97,10 @@ public class StudyTrackerUi extends Application {
     loginFieldGroup.getChildren().addAll(usernameLabel, usernameInput, passwordLabel, passwordInput);
 
     // rest of login container elements
-    Button loginButton = new Button("Login");
-    Button createButton = new Button("Create User");
     Label loginMessage = new Label("Welcome to Study Tracker!");
+    Button loginButton = new Button("Login");
+    Label createUserDirection = new Label("New User? Click Here To Sign Up");
+    Button createButton = new Button("Create User");
 
     // event handlers for buttons
     // TODO: abstract these away to a method
@@ -93,7 +108,7 @@ public class StudyTrackerUi extends Application {
       String username = usernameInput.getText();
       String password = passwordInput.getText();
 
-      primaryStage.setScene(newUserScene);
+      // primaryStage.setScene(newUserScene);
       // TODO: login logic
       // login only with valid credentials
     });
@@ -101,50 +116,50 @@ public class StudyTrackerUi extends Application {
     createButton.setOnAction(e -> {
       usernameInput.setText("");
       passwordInput.setText("");
-      primaryStage.setScene(newUserScene);
+      primaryStage.setScene(createUserScene);
     });
 
-    // add everything to the container
-    loginContainer.getChildren().addAll(loginMessage, loginFieldGroup, loginButton, createButton);
+    // add everything to the outer container
+    loginContainer.getChildren().addAll(loginMessage, loginFieldGroup, loginButton, createUserDirection, createButton);
 
     // place container within view
-    loginScene = new Scene(loginContainer, 400, 350, Color.INDIANRED);
+    loginScene = new Scene(loginContainer, LOGIN_WIDTH, LOGIN_HEIGHT);
 
-    /* Create New User Scene */
+    /* CREATE NEW USER SCENE */
 
     // containers
-    VBox newUserContainer = new VBox(CONTAINER_SPACING);
-    HBox createUserFieldGroup = new HBox(CONTAINER_SPACING);
-    createUserFieldGroup.setPadding(new Insets(CONTAINER_SPACING));
+    VBox createUserContainer = new VBox(CONTAINER_SPACING);
+    VBox createUserFieldGroup = new VBox(FIELD_GROUP_SPACING);
+    createUserFieldGroup.setPadding(new Insets(FIELD_GROUP_PADDING));
 
-    // reuse fields from login view & define scene-specif ones
+    // fields
     Label nameLabel = new Label("Name");
-    TextField nameInput = new TextField();
+    TextField newNameInput = new TextField();
+    Label newUsernameLabel = new Label("Username");
+    TextField newUsernameInput = new TextField();
+    Label newPasswordLabel = new Label("Password");
+    TextField newPasswordInput = new TextField();
     Label userCreationMessage = new Label();
 
     // add all field elements to field group
-    createUserFieldGroup.getChildren().addAll(nameLabel, nameInput, usernameLabel, usernameInput, passwordLabel,
-        passwordInput);
+    createUserFieldGroup.getChildren().addAll(nameLabel, newNameInput, newUsernameLabel, newUsernameInput,
+        newPasswordLabel, newPasswordInput);
 
     // rest of createUser container elements
     Button createUserButton = new Button("Create");
-    createUserButton.setPadding(new Insets(10));
+    createUserButton.setPadding(new Insets(BUTTON_PADDING));
 
     // event handlers for buttons
     createUserButton.setOnAction(e -> {
-      String name = nameInput.getText();
-      String username = usernameInput.getText();
-      String password = passwordInput.getText();
+      String name = newNameInput.getText();
+      String username = newUsernameInput.getText();
+      String password = newPasswordInput.getText();
 
       if (username.length() < MIN_USERNAME_LENGTH || name.length() < MIN_NAME_LENGTH
           || password.length() < MIN_PASS_LENGTH) {
         userCreationMessage.setText("The username, password, or name entered was too short");
         userCreationMessage.setTextFill(Color.RED);
-      } else if () {
-        // userCreationMessage.setText("");
-        // loginMessage.setText("new user created");
-        // loginMessage.setTextFill(Color.GREEN);
-        // primaryStage.setScene(loginScene);
+
       } else {
         userCreationMessage.setText("username has to be unique");
         userCreationMessage.setTextFill(Color.RED);
@@ -153,9 +168,10 @@ public class StudyTrackerUi extends Application {
     });
 
     // add everything to the container
+    createUserContainer.getChildren().addAll(createUserFieldGroup, createUserButton);
 
     // place container within view
-
+    createUserScene = new Scene(createUserContainer, CREATE_USER_WIDTH, CREATE_USER_HEIGHT);
 
     /* Initial View Set up */
     primaryStage.setTitle("Study Tracker");
@@ -170,7 +186,6 @@ public class StudyTrackerUi extends Application {
   }
 
   public static void main(String[] args) {
-    System.out.println("here now");
     launch(args);
   }
 
