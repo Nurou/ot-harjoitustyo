@@ -1,40 +1,32 @@
 package studytrackerapp.ui;
 
-import studytrackerapp.domain.*;
-
-import java.io.FileInputStream;
-import java.util.List;
-import java.util.Properties;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Box;
 import javafx.stage.Stage;
+import studytrackerapp.domain.*;
 
 /**
  *
  * @author joelhassan
  */
-
 // TODO: scene creation should be abstracted
 // TODO: get rid of magic numbers - place dimensions in constants
 
 public class StudyTrackerUi extends Application {
 
   /* Constants */
-
   // credentials
   private final int MIN_PASS_LENGTH = 3;
   private final int MIN_NAME_LENGTH = 2;
@@ -46,8 +38,8 @@ public class StudyTrackerUi extends Application {
   private final int FIELD_GROUP_SPACING = 10;
   private final int FIELD_GROUP_PADDING = 15;
 
-  private final int LOGIN_WIDTH = 700;
-  private final int LOGIN_HEIGHT = 500;
+  private final int SCENE_WIDTH = 1000;
+  private final int SCENE_HEIGHT = 600;
 
   private final int CREATE_USER_WIDTH = 700;
   private final int CREATE_USER_HEIGHT = 500;
@@ -56,29 +48,43 @@ public class StudyTrackerUi extends Application {
   private final int BUTTON_PADDING = 10;
 
   /* Application Views */
-  private Scene welcomeScene;
   private Scene loginScene;
-  private Scene createUserScene;
-  private Scene profileScene;
+  private Scene newUserScene;
   private Scene newCourseScene;
-  private Scene couseManagementScene;
+  private Scene courseManagementScene;
 
-  public Node createCourseNode(Course course) {
-    HBox box = new HBox(CONTAINER_SPACING);
-    return box;
-  }
+  /**
+   * 1. Create all of the views used in the App 2. Set star view
+   */
+  @Override
+  public void start(Stage mainStage) {
 
-  public void redrawCourseList() {
+    System.out.println("Application launched...");
 
+    /* CREATE SCENES */
+    loginScene = createLoginScene(mainStage);
+    newUserScene = createNewUserScene(mainStage);
+    courseManagementScene = createCourseManagementScene(mainStage);
+
+    // ---------------------------------------
+
+    // set up initial view
+    mainStage.setTitle("Study Tracker");
+    mainStage.setScene(loginScene);
+    mainStage.show();
   }
 
   @Override
-  public void start(Stage primaryStage) {
+  public void stop() {
+    // clean up
+    System.out.println("The application is shutting down.");
+  }
 
-    System.out.println("Application launched!");
+  public static void main(String[] args) {
+    launch(args);
+  }
 
-    /* LOGIN SCENE */
-
+  private Scene createLoginScene(Stage mainStage) {
     // containers
     VBox loginContainer = new VBox(CONTAINER_SPACING); // this is the outer 'wrapper' box
     VBox loginFieldGroup = new VBox(FIELD_GROUP_SPACING); // holds all input elements, nested within outer box
@@ -108,24 +114,30 @@ public class StudyTrackerUi extends Application {
       String username = usernameInput.getText();
       String password = passwordInput.getText();
 
-      // primaryStage.setScene(newUserScene);
+      // mainStage.setScene(newUserScene);
       // TODO: login logic
       // login only with valid credentials
+
+      mainStage.setScene(courseManagementScene);
     });
 
     createButton.setOnAction(e -> {
       usernameInput.setText("");
       passwordInput.setText("");
-      primaryStage.setScene(createUserScene);
+      mainStage.setScene(newUserScene);
     });
 
     // add everything to the outer container
     loginContainer.getChildren().addAll(loginMessage, loginFieldGroup, loginButton, createUserDirection, createButton);
 
-    // place container within view
-    loginScene = new Scene(loginContainer, LOGIN_WIDTH, LOGIN_HEIGHT);
+    // loginContainer.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
 
-    /* CREATE NEW USER SCENE */
+    // place container within view
+    loginScene = new Scene(loginContainer, SCENE_WIDTH, SCENE_HEIGHT);
+    return loginScene;
+  }
+
+  private Scene createNewUserScene(Stage mainStage) {
 
     // containers
     VBox createUserContainer = new VBox(CONTAINER_SPACING);
@@ -171,22 +183,69 @@ public class StudyTrackerUi extends Application {
     createUserContainer.getChildren().addAll(createUserFieldGroup, createUserButton);
 
     // place container within view
-    createUserScene = new Scene(createUserContainer, CREATE_USER_WIDTH, CREATE_USER_HEIGHT);
+    newUserScene = new Scene(createUserContainer, CREATE_USER_WIDTH, CREATE_USER_HEIGHT);
 
-    /* Initial View Set up */
-    primaryStage.setTitle("Study Tracker");
-    primaryStage.setScene(loginScene);
-    primaryStage.show();
+    return newUserScene;
   }
 
-  @Override
-  public void stop() {
-    // clean up
-    System.out.println("The application is shutting down.");
-  }
+  private Scene createCourseManagementScene(Stage mainStage) {
+    // Containers
+    VBox manageCoursesContainer = new VBox();
+    manageCoursesContainer.setPadding(new Insets(10));
 
-  public static void main(String[] args) {
-    launch(args);
-  }
+    VBox profileContainer = new VBox();
+    profileContainer.setPadding(new Insets(10));
+    profileContainer.setSpacing(20);
+    profileContainer.setAlignment(Pos.TOP_CENTER);
 
+    Label welcomeMessage = new Label("Hello *user*! Here's your profile");
+    Label progressBarMessage = new Label("Your progress so far:");
+    ProgressBar progressBar = new ProgressBar(0);
+
+    // add profile elements to their container
+    profileContainer.getChildren().addAll(welcomeMessage, progressBarMessage, progressBar);
+
+    // course board - board and labels
+
+    HBox courseBoard = new HBox();
+    courseBoard.setSpacing(20);
+    courseBoard.setPadding(new Insets(30));
+
+    // column labels
+    Label backlog = new Label("Backlog");
+    Label ongoing = new Label("Ongoing");
+    Label completed = new Label("Completed");
+
+    // column lists
+    ScrollPane backlogScroll = new ScrollPane();
+    ScrollPane ongoingScroll = new ScrollPane();
+    ScrollPane completedScroll = new ScrollPane();
+
+    VBox backlogColumn = new VBox(15);
+    backlogColumn.setMinWidth(250);
+    backlogColumn.getChildren().add(backlog);
+    backlogColumn.getChildren().add(backlogScroll);
+    VBox ongoingColumn = new VBox(15);
+    ongoingColumn.setMinWidth(250);
+    ongoingColumn.getChildren().add(ongoing);
+    ongoingColumn.getChildren().add(ongoingScroll);
+    VBox completedColumn = new VBox(15);
+    completedColumn.setMinWidth(250);
+    completedColumn.getChildren().add(completed);
+    completedColumn.getChildren().add(completedScroll);
+
+    courseBoard.getChildren().add(backlogColumn);
+    courseBoard.getChildren().add(ongoingColumn);
+    courseBoard.getChildren().add(completedColumn);
+
+    courseBoard.setAlignment(Pos.BASELINE_CENTER);
+
+    // add everything to the container
+    manageCoursesContainer.getChildren().addAll(profileContainer, courseBoard);
+
+    // place container within view
+    courseManagementScene = new Scene(manageCoursesContainer, SCENE_WIDTH, SCENE_HEIGHT);
+
+    return courseManagementScene;
+  }
 }

@@ -12,3 +12,4 @@
 !.vscode/extensions.json
 *.code-workspace
 /studyTracker/target/
+/studyTracker/nbproject/
