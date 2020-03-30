@@ -4,15 +4,11 @@ StudyTracker is a desktop application designed to enable a student to keep track
 
 ## Documentation
 
-<<<<<<< HEAD
 [Requirements Specification](https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/requirements-specification.md)
 [Architecture](https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/architecture.md)
 [Project Time Log](https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/project-log.md)
 [Test Documentation](https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/test-documentation.md)
 [User Guide](https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/user-guide.md)
-=======
-It's implemented in Java and features:
->>>>>>> b5fd6f3256241e57a321e4d9fa60f06f91147ad3
 
 ## Releases
 
