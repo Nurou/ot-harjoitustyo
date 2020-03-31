@@ -1,20 +1,29 @@
 package studytrackerapp.ui;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.beans.*;
+import javafx.beans.property.ReadOnlyProperty;
 import studytrackerapp.domain.*;
 
 /**
@@ -53,9 +62,6 @@ public class StudyTrackerUi extends Application {
   private Scene newCourseScene;
   private Scene courseManagementScene;
 
-  /**
-   * 1. Create all of the views used in the App 2. Set star view
-   */
   @Override
   public void start(Stage mainStage) {
 
@@ -65,10 +71,11 @@ public class StudyTrackerUi extends Application {
     loginScene = createLoginScene(mainStage);
     newUserScene = createNewUserScene(mainStage);
     courseManagementScene = createCourseManagementScene(mainStage);
+    newCourseScene = createNewCourseScene(mainStage);
 
     // ---------------------------------------
 
-    // set up initial view
+    /* SET UP INITIAL VIEW */
     mainStage.setTitle("Study Tracker");
     mainStage.setScene(loginScene);
     mainStage.show();
@@ -83,6 +90,11 @@ public class StudyTrackerUi extends Application {
   public static void main(String[] args) {
     launch(args);
   }
+
+  /**
+   * Methods for creating the various application views
+   * 
+   */
 
   private Scene createLoginScene(Stage mainStage) {
     // containers
@@ -133,10 +145,13 @@ public class StudyTrackerUi extends Application {
     // loginContainer.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
 
     // place container within view
-    loginScene = new Scene(loginContainer, SCENE_WIDTH, SCENE_HEIGHT);
-    return loginScene;
+    return new Scene(loginContainer, SCENE_WIDTH, SCENE_HEIGHT);
   }
 
+  /**
+   * @param mainStage
+   * @return Scene
+   */
   private Scene createNewUserScene(Stage mainStage) {
 
     // containers
@@ -183,9 +198,8 @@ public class StudyTrackerUi extends Application {
     createUserContainer.getChildren().addAll(createUserFieldGroup, createUserButton);
 
     // place container within view
-    newUserScene = new Scene(createUserContainer, CREATE_USER_WIDTH, CREATE_USER_HEIGHT);
+    return new Scene(createUserContainer, CREATE_USER_WIDTH, CREATE_USER_HEIGHT);
 
-    return newUserScene;
   }
 
   private Scene createCourseManagementScene(Stage mainStage) {
@@ -205,8 +219,7 @@ public class StudyTrackerUi extends Application {
     // add profile elements to their container
     profileContainer.getChildren().addAll(welcomeMessage, progressBarMessage, progressBar);
 
-    // course board - board and labels
-
+    // set up the board for the courses, inc. labels
     HBox courseBoard = new HBox();
     courseBoard.setSpacing(20);
     courseBoard.setPadding(new Insets(30));
@@ -216,11 +229,12 @@ public class StudyTrackerUi extends Application {
     Label ongoing = new Label("Ongoing");
     Label completed = new Label("Completed");
 
-    // column lists
+    // column areas
     ScrollPane backlogScroll = new ScrollPane();
     ScrollPane ongoingScroll = new ScrollPane();
     ScrollPane completedScroll = new ScrollPane();
 
+    // put labels and areas together to form column
     VBox backlogColumn = new VBox(15);
     backlogColumn.setMinWidth(250);
     backlogColumn.getChildren().add(backlog);
@@ -240,12 +254,106 @@ public class StudyTrackerUi extends Application {
 
     courseBoard.setAlignment(Pos.BASELINE_CENTER);
 
+    // buttons
+    Button logoutButton = new Button("Logout");
+    logoutButton.setOnAction(e -> {
+      mainStage.setScene(loginScene);
+    });
+
+    logoutButton.setAlignment(Pos.BASELINE_LEFT);
+
+    Button addCourseButton = new Button("Add Course");
+    addCourseButton.setOnAction(e -> {
+      mainStage.setScene(newCourseScene);
+    });
+
+    addCourseButton.setAlignment(Pos.BASELINE_RIGHT);
+
+    ToggleButton modifyCourseButton = new ToggleButton("Modify Courses");
+    modifyCourseButton.setOnAction(e -> {
+
+    });
+
+    modifyCourseButton.setAlignment(Pos.BASELINE_RIGHT);
+
+    // other components
+    Separator separator = new Separator(Orientation.HORIZONTAL);
+
     // add everything to the container
-    manageCoursesContainer.getChildren().addAll(profileContainer, courseBoard);
+    manageCoursesContainer.getChildren().addAll(profileContainer, separator, courseBoard, logoutButton, addCourseButton,
+        modifyCourseButton);
 
     // place container within view
-    courseManagementScene = new Scene(manageCoursesContainer, SCENE_WIDTH, SCENE_HEIGHT);
+    return new Scene(manageCoursesContainer, SCENE_WIDTH, SCENE_HEIGHT);
+  }
 
-    return courseManagementScene;
+  private Scene createNewCourseScene(Stage mainStage) {
+    // container for field group
+    VBox courseFieldGroup = new VBox();
+    courseFieldGroup.setPadding(new Insets(10));
+
+    // individual fields
+    Label courseNameLabel = new Label("Name");
+    TextField courseNameInput = new TextField();
+
+    Label courseCredits = new Label("Credits");
+    TextField courseCreditsInput = new TextField();
+
+    Label coursePeriod = new Label("Period");
+    TextField coursePeriodInput = new TextField();
+
+    // add fields to field group
+    courseFieldGroup.getChildren().addAll(courseNameLabel, courseNameInput, courseCredits, courseCreditsInput,
+        coursePeriod, coursePeriodInput);
+
+    // horizontal container for checkbox selection - course mandatory or not
+    HBox statusContainer = new HBox();
+    Label mandatoryLabel = new Label("Mandatory: ");
+
+    // allow only one checkbox to be selected at once
+    String[] options = new String[] { "Yes", "No" };
+    final int maxCount = 1;
+    final Set<CheckBox> activeBoxes = new LinkedHashSet<>();
+
+    ChangeListener<Boolean> listener = (o, oldValue, newValue) -> {
+      // get checkbox containing property
+      CheckBox cb = (CheckBox) ((ReadOnlyProperty<Boolean>) o).getBean();
+
+      if (newValue) {
+        activeBoxes.add(cb);
+        if (activeBoxes.size() > maxCount) {
+          // get first checkbox to be activated
+          cb = activeBoxes.iterator().next();
+
+          // unselect; change listener will remove
+          cb.setSelected(false);
+        }
+      } else {
+        activeBoxes.remove(cb);
+      }
+    };
+
+    // create checkboxes
+    statusContainer.getChildren().add(mandatoryLabel);
+    for (int i = 0; i < options.length; i++) {
+      CheckBox cb = new CheckBox(options[i]);
+      cb.selectedProperty().addListener(listener);
+      statusContainer.getChildren().add(cb);
+    }
+
+    // buttons
+    Button addCourseButton = new Button("Add");
+    addCourseButton.setOnAction(e -> {
+      // logic when course is added...
+    });
+
+    // place containers inside outer container
+    BorderPane wrapperContainer = new BorderPane();
+    wrapperContainer.setTop(courseFieldGroup);
+    wrapperContainer.setCenter(statusContainer);
+    wrapperContainer.setCenter(addCourseButton);
+
+    return new Scene(wrapperContainer, SCENE_WIDTH, SCENE_HEIGHT);
+
   }
 }

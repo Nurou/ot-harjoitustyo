@@ -3,23 +3,30 @@ package studytrackerapp.domain;
 
 import java.util.Objects;
 
+/**
+ * Class representing a course studied by the user
+ */
+
 public class Course {
 
   private String name;
-  private int Credits;
-  private boolean compulsory;
+  private int credits;
+  private boolean isCompulsory;
   private int period;
   private String courseLink;
+
+  private User user;
 
   public Course() {
   }
 
-  public Course(String name, int Credits, boolean compulsory, int period, String courseLink) {
+  public Course(String name, int credits, int period, boolean isCompulsory, String courseLink, User user) {
     this.name = name;
-    this.Credits = Credits;
-    this.compulsory = compulsory;
+    this.credits = credits;
+    this.isCompulsory = isCompulsory;
     this.period = period;
     this.courseLink = courseLink;
+    this.user = user;
   }
 
   public String getName() {
@@ -31,23 +38,23 @@ public class Course {
   }
 
   public int getCredits() {
-    return this.Credits;
+    return this.credits;
   }
 
-  public void setCredits(int Credits) {
-    this.Credits = Credits;
+  public void setCredits(int credits) {
+    this.credits = credits;
   }
 
   public boolean isCompulsory() {
-    return this.compulsory;
+    return this.isCompulsory;
   }
 
   public boolean getCompulsory() {
-    return this.compulsory;
+    return this.isCompulsory;
   }
 
-  public void setCompulsory(boolean compulsory) {
-    this.compulsory = compulsory;
+  public void setCompulsory(boolean isCompulsory) {
+    this.isCompulsory = isCompulsory;
   }
 
   public int getPeriod() {
@@ -71,13 +78,13 @@ public class Course {
     return this;
   }
 
-  public Course Credits(int Credits) {
-    this.Credits = Credits;
+  public Course credits(int credits) {
+    this.credits = credits;
     return this;
   }
 
-  public Course compulsory(boolean compulsory) {
-    this.compulsory = compulsory;
+  public Course isCompulsory(boolean isCompulsory) {
+    this.isCompulsory = isCompulsory;
     return this;
   }
 
@@ -99,18 +106,18 @@ public class Course {
       return false;
     }
     Course course = (Course) o;
-    return Objects.equals(name, course.name) && Credits == course.Credits && compulsory == course.compulsory
+    return Objects.equals(name, course.name) && credits == course.credits && isCompulsory == course.isCompulsory
         && period == course.period && Objects.equals(courseLink, course.courseLink);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, Credits, compulsory, period, courseLink);
+    return Objects.hash(name, credits, isCompulsory, period, courseLink);
   }
 
   @Override
   public String toString() {
-    return "{" + " name='" + getName() + "'" + ", Credits='" + getCredits() + "'" + ", compulsory='" + isCompulsory()
+    return "{" + " name='" + getName() + "'" + ", credits='" + getCredits() + "'" + ", isCompulsory='" + isCompulsory()
         + "'" + ", period='" + getPeriod() + "'" + ", courseLink='" + getCourseLink() + "'" + "}";
   }
 
