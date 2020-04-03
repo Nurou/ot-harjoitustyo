@@ -46,13 +46,7 @@ Potential error messages are shown by opening the file _target/site/checkstyle.h
 
 ### Generating an executable jar
 
-The command
 
-```
-mvn package
-```
-
-generates an executable file _habitRPG-1.0-SNAPSHOT.jar_ into the directory _target_
 
 ### JavaDoc
 
