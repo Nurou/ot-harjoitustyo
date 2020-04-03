@@ -8,7 +8,7 @@
 | 29.03 | 3          | More work on views                                                                             |
 | 30.03 | 2.5        | Looked into db solution and refactored code                                                    |
 | 31.03 | 4          | Set up database stuff, DAO classes, first tests                                                |
-|       |            |                                                                                                |
+| 03.04 | 1          | Work on database DAOs                                                                          |
 |       |            |                                                                                                |
 |       |            |                                                                                                |
 |       |            |                                                                                                |

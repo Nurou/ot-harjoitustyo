@@ -11,8 +11,9 @@ public class Course {
 
   private String name;
   private int credits;
-  private boolean isCompulsory;
+  private int isCompulsory;
   private int period;
+  private String status;
   private String courseLink;
 
   private User user;
@@ -20,13 +21,21 @@ public class Course {
   public Course() {
   }
 
-  public Course(String name, int credits, int period, boolean isCompulsory, String courseLink, User user) {
+  public Course(String name, int credits, int isCompulsory, int period, String courseLink, User user) {
     this.name = name;
     this.credits = credits;
     this.isCompulsory = isCompulsory;
     this.period = period;
     this.courseLink = courseLink;
     this.user = user;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
   }
 
   public String getName() {
@@ -45,15 +54,11 @@ public class Course {
     this.credits = credits;
   }
 
-  public boolean isCompulsory() {
+  public int getIsCompulsory() {
     return this.isCompulsory;
   }
 
-  public boolean getCompulsory() {
-    return this.isCompulsory;
-  }
-
-  public void setCompulsory(boolean isCompulsory) {
+  public void setIsCompulsory(int isCompulsory) {
     this.isCompulsory = isCompulsory;
   }
 
@@ -73,29 +78,12 @@ public class Course {
     this.courseLink = courseLink;
   }
 
-  public Course name(String name) {
-    this.name = name;
-    return this;
+  public User getUser() {
+    return this.user;
   }
 
-  public Course credits(int credits) {
-    this.credits = credits;
-    return this;
-  }
-
-  public Course isCompulsory(boolean isCompulsory) {
-    this.isCompulsory = isCompulsory;
-    return this;
-  }
-
-  public Course period(int period) {
-    this.period = period;
-    return this;
-  }
-
-  public Course courseLink(String courseLink) {
-    this.courseLink = courseLink;
-    return this;
+  public void setUser(User user) {
+    this.user = user;
   }
 
   @Override
@@ -107,18 +95,20 @@ public class Course {
     }
     Course course = (Course) o;
     return Objects.equals(name, course.name) && credits == course.credits && isCompulsory == course.isCompulsory
-        && period == course.period && Objects.equals(courseLink, course.courseLink);
+        && period == course.period && Objects.equals(courseLink, course.courseLink)
+        && Objects.equals(user, course.user);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, credits, isCompulsory, period, courseLink);
+    return Objects.hash(name, credits, isCompulsory, period, courseLink, user);
   }
 
   @Override
   public String toString() {
-    return "{" + " name='" + getName() + "'" + ", credits='" + getCredits() + "'" + ", isCompulsory='" + isCompulsory()
-        + "'" + ", period='" + getPeriod() + "'" + ", courseLink='" + getCourseLink() + "'" + "}";
+    return "{" + " name='" + getName() + "'" + ", credits='" + getCredits() + "'" + ", isCompulsory='"
+        + getIsCompulsory() + "'" + ", period='" + getPeriod() + "'" + ", courseLink='" + getCourseLink() + "'"
+        + ", user='" + getUser() + "'" + "}";
   }
 
 }

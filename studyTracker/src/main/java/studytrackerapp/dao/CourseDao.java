@@ -3,6 +3,7 @@ package studytrackerapp.dao;
 import java.util.List;
 
 import studytrackerapp.domain.Course;
+import studytrackerapp.domain.User;
 
 public interface CourseDao {
 
@@ -10,6 +11,12 @@ public interface CourseDao {
 
   List<Course> getAll();
 
-  void modify(int id) throws Exception;
+  Course getOne();
+
+  void setUser(User user);
+
+  boolean delete(Integer key) throws Exception;
+
+  boolean changeStatus(Integer key) throws Exception;
 
 }
