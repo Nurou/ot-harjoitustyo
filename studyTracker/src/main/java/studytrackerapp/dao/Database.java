@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
+ * This class provides shared functionality for the DAO classes that interface
+ * with the db
  * 
  * @author joelhassan
  */
@@ -13,9 +15,6 @@ public class Database {
 
   private String path;
 
-  /**
-   * Constructor
-   */
   public Database() {
   }
 
@@ -25,6 +24,7 @@ public class Database {
    * @return connection object representing a connection to a database
    * @throws SQLException (connection cannot be established)
    */
+
   public Connection getConnection() throws SQLException {
     return DriverManager.getConnection("jdbc:sqlite:" + path);
   }
@@ -35,6 +35,7 @@ public class Database {
    * 
    * @param fileName (name of the database file as a string)
    */
+
   public void createDatabase(String fileName) {
 
     Connection connection = null;

@@ -25,7 +25,7 @@ public class UserService {
 
   public boolean login(String username) {
     // attempt to fetch user
-    User user = userDao.getOne(username);
+    User user = userDao.read(username);
 
     // no such user?
     if (user == null) {
@@ -62,7 +62,7 @@ public class UserService {
    * @return true if no issues in creating user
    */
   public boolean newUser(String name, String username, String password) {
-    if (userDao.getOne(username) != null) {
+    if (userDao.read(username) != null) {
       return false;
     }
     userDao.create(new User(name, username, password));

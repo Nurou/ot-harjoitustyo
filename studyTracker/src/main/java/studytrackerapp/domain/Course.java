@@ -21,7 +21,7 @@ public class Course {
   public Course() {
   }
 
-  public Course(String name, int credits, int isCompulsory, int period, String courseLink, User user) {
+  public Course(String name, int credits, int isCompulsory, int period, String status, String courseLink, User user) {
     this.name = name;
     this.credits = credits;
     this.isCompulsory = isCompulsory;

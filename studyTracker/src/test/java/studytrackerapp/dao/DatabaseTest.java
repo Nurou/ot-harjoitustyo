@@ -18,7 +18,7 @@ public class DatabaseTest {
   }
 
   @Test
-  public void creatingDbSucceeds() {
+  public void canCreateDatabase() {
     Database testDatabase = new Database();
     testDatabase.createDatabase("some.db");
     File file = new File("some.db");
@@ -27,7 +27,7 @@ public class DatabaseTest {
   }
 
   @Test
-  public void connectionToDbSucceeds() {
+  public void canConnectToDatabase() {
     Database testDatabase = new Database();
     testDatabase.createDatabase("some.db");
     Connection connection = null;
