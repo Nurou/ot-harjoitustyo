@@ -8,6 +8,15 @@ import java.sql.Statement;
 
 import studytrackerapp.ui.StudyTrackerUi;
 
+/* WEEK4 TODOS
+  - progress in testing
+  - test coverage > 20%
+  - test relevant things
+  - separated logic from UI
+  - use checkstyle: must have under 10 errors (does not need to test UI building code)
+  https://github.com/mluukkai/ohjelmistotekniikka-kevat-2020/blob/master/tehtavat/harjoitustyo_viikko4.md
+*/
+
 public class Main {
 
   public static void main(String[] args) throws Exception {

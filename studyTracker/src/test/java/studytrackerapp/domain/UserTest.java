@@ -1,9 +1,7 @@
 package studytrackerapp.domain;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -11,28 +9,27 @@ import org.junit.BeforeClass;
  */
 public class UserTest {
 
-    public UserTest() {
-    }
+  public UserTest() {
+  }
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+  @Test
+  public void usersWithSameContentAreEqual() {
+    User u1 = new User("person", "user", "pass");
+    User u2 = new User("person", "user", "pass");
+    assertTrue(u1.equals(u2));
+  }
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+  @Test
+  public void usersWithDifferentContentAreNotEqual() {
+    User u1 = new User("person", "user", "password");
+    User u2 = new User("second", "user", "password");
+    assertFalse(u1.equals(u2));
+  }
 
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
+  @Test
+  public void userNotEqualToObjectOfDifferentType() {
+    User u = new User("person", "user", "password");
+    Object o = new Object();
+    assertFalse(u.equals(o));
+  }
 }

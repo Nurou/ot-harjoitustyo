@@ -35,7 +35,7 @@ public class CourseDao implements Dao<Course, String> {
   }
 
   /**
-   * Adds a new course into the database
+   * Adds a new course into the database each course belongs to a specific user
    * 
    * @param course - the Course to be added to the database (holds all the
    *               necessary info)
@@ -44,7 +44,7 @@ public class CourseDao implements Dao<Course, String> {
   @Override
   public Course create(Course course) {
     // define query
-    String sql = "INSERT INTO " + "Course(name, credits, compulsory, period, status, course_link ) "
+    String sql = "INSERT INTO " + "Course(name, credits, compulsory, period, status, course_link, username ) "
         + "VALUES (?, ?, ?, ?, ?, ?)";
 
     try (Connection connection = database.getConnection();
@@ -56,6 +56,7 @@ public class CourseDao implements Dao<Course, String> {
       statement.setInt(4, course.getPeriod());
       statement.setString(5, course.getStatus());
       statement.setString(6, course.getCourseLink());
+      statement.setString(7, this.user.getUsername());
       statement.executeUpdate();
     } catch (SQLException e) {
       // nothing returned if a course was not created
@@ -67,32 +68,35 @@ public class CourseDao implements Dao<Course, String> {
   }
 
   /**
-   * Returns a list of all the courses in the database
+   * Returns a list of all the courses in the database for a given user
    * 
    * @return List<Course>
    */
   @Override
   public List<Course> list() {
 
-    List<String> courses = new ArrayList<>();
+    List<Course> courses = new ArrayList<>();
 
     String sql = "SELECT * FROM Course WHERE username = ?";
 
     try (Connection connection = database.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
-      statement.setString(1, user.getName());
+
+      statement.setString(1, this.user.getUsername());
+
       // get query results
       ResultSet resultSet = statement.executeQuery();
-      // extract data
+
+      // extract query results & add to the course list
       while (resultSet.next()) {
         System.out.println(resultSet.next());
-
-        // Course newCourse = new Course(res.get)
-        // courses.add();
+        courses.add(new Course(resultSet.getString("name"), resultSet.getInt("credits"),
+            resultSet.getInt("isCompulsory"), resultSet.getInt("period"), resultSet.getString("status"),
+            resultSet.getString("course_link"), this.user));
       }
 
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      System.err.println(e.getMessage());
     }
 
     // return courses
@@ -116,6 +120,12 @@ public class CourseDao implements Dao<Course, String> {
     // TODO Auto-generated method stub
 
   }
+
+  /**
+   * Creates a table for the object type in the db if one does not already exist
+   * 
+   * @throws SQLException
+   */
 
   @Override
   public void createTable() throws SQLException {

@@ -7,6 +7,8 @@ import java.util.List;
  * The DAO API keeps the domain model completely decoupled from the persistence
  * layer
  * 
+ * It defines CRUD operations for the DAOs to implement
+ * 
  * @param <T> - objects of type T
  * @param <K> - keys of type K
  * 

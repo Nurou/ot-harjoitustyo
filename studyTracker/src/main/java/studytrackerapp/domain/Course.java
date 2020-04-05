@@ -18,16 +18,46 @@ public class Course {
 
   private User user;
 
-  public Course() {
-  }
+  /**
+   * Constructor for when all the params are known, inc. user
+   * 
+   * @param name         - name of user
+   * @param credits      - number of credits course is worth
+   * @param isCompulsory - is the course compulsory. 0: No, 1: Yes
+   * @param period       - the period the course takes place in
+   * @param status       - current status of the course: backlog, ongoing,
+   *                     completed
+   * @param courseLink   - url linking to the course
+   * @param user         - the user the course belongs to
+   */
 
   public Course(String name, int credits, int isCompulsory, int period, String status, String courseLink, User user) {
     this.name = name;
     this.credits = credits;
     this.isCompulsory = isCompulsory;
     this.period = period;
+    this.status = status;
     this.courseLink = courseLink;
     this.user = user;
+  }
+
+  /**
+   * 
+   * @param name
+   * @param credits
+   * @param isCompulsory
+   * @param period
+   * @param status
+   * @param courseLink
+   */
+
+  public Course(String name, int credits, int isCompulsory, int period, String status, String courseLink) {
+    this.name = name;
+    this.credits = credits;
+    this.isCompulsory = isCompulsory;
+    this.period = period;
+    this.status = status;
+    this.courseLink = courseLink;
   }
 
   public String getStatus() {

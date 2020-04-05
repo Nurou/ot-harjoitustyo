@@ -23,17 +23,20 @@ public class UserService {
    * @return true if login successful, false if unsuccessful
    */
 
-  public boolean login(String username) {
+  public boolean login(String username, String password) {
     // attempt to fetch user
     User user = userDao.read(username);
 
-    // no such user?
-    if (user == null) {
+    System.out.println("User read from db!");
+
+    // no such user or incorrect pass?
+    if (user == null || user.getPassword() != password) {
       return false;
     }
 
     // otherwise,
     this.currentlyLoggedIn = user;
+    System.out.println(username + " has logged in.");
     return true;
   }
 

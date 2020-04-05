@@ -24,6 +24,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.beans.*;
 import javafx.beans.property.ReadOnlyProperty;
+import studytrackerapp.dao.CourseDao;
+import studytrackerapp.dao.Database;
+import studytrackerapp.dao.UserDao;
 import studytrackerapp.domain.*;
 
 /**
@@ -35,7 +38,10 @@ import studytrackerapp.domain.*;
 
 public class StudyTrackerUi extends Application {
 
-  /* Constants */
+  /**
+   * Constants
+   */
+
   // credentials
   private final int MIN_PASS_LENGTH = 3;
   private final int MIN_NAME_LENGTH = 2;
@@ -62,12 +68,44 @@ public class StudyTrackerUi extends Application {
   private Scene newCourseScene;
   private Scene courseManagementScene;
 
+  /**
+   * Services
+   */
+  private UserService userService;
+  private CourseService courseService;
+
+  /**
+   * Initializes everything needed for the app to run
+   * 
+   * @throws Exception unable to initialize application
+   */
+
+  @Override
+  public void init() throws Exception {
+
+    // Database
+    Database database = new Database();
+    database.createDatabase("study-tracker.db");
+
+    // DAOs
+    UserDao userDao = new UserDao(database);
+    CourseDao courseDao = new CourseDao(database);
+
+    // Services
+    userService = new UserService(userDao);
+    courseService = new CourseService(courseDao);
+
+  }
+
   @Override
   public void start(Stage mainStage) {
 
     System.out.println("Application launched...");
 
-    /* CREATE SCENES */
+    /**
+     * CREATE SCENES
+     */
+
     loginScene = createLoginScene(mainStage);
     newUserScene = createNewUserScene(mainStage);
     courseManagementScene = createCourseManagementScene(mainStage);
@@ -75,7 +113,9 @@ public class StudyTrackerUi extends Application {
 
     // ---------------------------------------
 
-    /* SET UP INITIAL VIEW */
+    /**
+     * SET UP INITIAL VIEW
+     */
     mainStage.setTitle("Study Tracker");
     mainStage.setScene(loginScene);
     mainStage.show();
@@ -84,7 +124,7 @@ public class StudyTrackerUi extends Application {
   @Override
   public void stop() {
     // clean up
-    System.out.println("The application is shutting down.");
+    System.out.println("Application shutting down.");
   }
 
   public static void main(String[] args) {

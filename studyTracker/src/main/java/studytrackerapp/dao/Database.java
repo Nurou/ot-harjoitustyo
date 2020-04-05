@@ -46,6 +46,7 @@ public class Database {
       connection = DriverManager.getConnection("jdbc:sqlite:" + fileName);
       System.out.println("Connection to SQLite has been established.");
     } catch (Exception e) {
+      System.out.println("Error here!");
       System.err.println("Error: " + e.getMessage());
     } finally {
       this.setPath(fileName);

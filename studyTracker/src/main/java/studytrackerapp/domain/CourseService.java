@@ -1,7 +1,9 @@
 package studytrackerapp.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import studytrackerapp.dao.CourseDao;
-import studytrackerapp.dao.UserDao;
 
 /**
  * A class for creating and modifying Course objects through its corresponding
@@ -10,33 +12,39 @@ import studytrackerapp.dao.UserDao;
 public class CourseService {
 
   private CourseDao courseDao;
-  private UserDao userDao;
-  private User loggedIn;
+  private List<Course> courses;
 
-  public CourseService(CourseDao courseDao, UserDao userDao) {
+  public CourseService(CourseDao courseDao) {
     // initialise DAO
     this.courseDao = courseDao;
-    this.userDao = userDao;
+    this.courses = new ArrayList<>();
   }
 
   /**
-   * Adding a new course for a logged-in user input provided through the GUI
-   *
-   * @param name         - name of user
-   * @param credits      - number of credits course is worth
-   * @param isCompulsory - is the course compulsory
-   * @param period       - the period the course takes place in
-   * @param status       - current status of the course
-   * @param courseLink   - url linking to the course
+   * Assigns a user to the given course through the courseDao
    * 
+   * @param user
+   */
+
+  public void assignUser(User user) {
+    courseDao.setUser(user);
+  }
+
+  /**
+   * Interacts with courseDao to add a course to the db User not included since
+   * its stored in CourseDao
+   * 
+   * @return true if course was created, false otherwise
    */
 
   public boolean createCourse(String name, int credits, int isCompulsory, int period, String status,
       String courseLink) {
-    Course course = new Course(name, credits, isCompulsory, period, status, courseLink, loggedIn);
-
     try {
-      courseDao.create(course);
+      Course newCourse = courseDao.create(new Course(name, credits, isCompulsory, period, status, courseLink));
+
+      if (newCourse != null)
+        return true;
+
     } catch (Exception ex) {
       return false;
     }
