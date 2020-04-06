@@ -9,9 +9,6 @@ import static org.junit.Assert.*;
  */
 public class UserTest {
 
-  public UserTest() {
-  }
-
   @Test
   public void usersWithSameContentAreEqual() {
     User u1 = new User("person", "user", "pass");

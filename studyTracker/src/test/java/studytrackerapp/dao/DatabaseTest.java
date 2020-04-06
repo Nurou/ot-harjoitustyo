@@ -6,6 +6,12 @@ import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/**
+ * DAOs not tested individually since the services are, and the services utilise
+ * the DAOs
+ * 
+ */
+
 public class DatabaseTest {
 
   public DatabaseTest() {
@@ -36,7 +42,7 @@ public class DatabaseTest {
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
-    assertTrue(connection != null);
+    assertNotNull(connection);
   }
 
 }

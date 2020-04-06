@@ -3,6 +3,7 @@ package studytrackerapp.dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * This class provides shared functionality for the DAO classes that interface
@@ -45,8 +46,10 @@ public class Database {
       // creating a connection over jdbc
       connection = DriverManager.getConnection("jdbc:sqlite:" + fileName);
       System.out.println("Connection to SQLite has been established.");
+
+      createTables(connection);
+
     } catch (Exception e) {
-      System.out.println("Error here!");
       System.err.println("Error: " + e.getMessage());
     } finally {
       this.setPath(fileName);
@@ -57,6 +60,31 @@ public class Database {
       } catch (SQLException ex) {
         System.out.println(ex.getMessage());
       }
+    }
+  }
+
+  /**
+   * Adds the required tables to the db
+   * 
+   * @param connection
+   * @throws SQLException
+   */
+  public void createTables(Connection connection) throws SQLException {
+    String userTableSql = "CREATE TABLE IF NOT EXISTS User (username TEXT PRIMARY KEY, name TEXT, password TEXT)";
+
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(userTableSql);
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
+    }
+
+    String courseTableSql = "CREATE TABLE IF NOT EXISTS Course (id INTEGER PRIMARY KEY, name TEXT, credits INTEGER NOT NULL, compulsory INTEGER NOT NULL, period INTEGER NOT NULL, status INTEGER NOT NULL, course_link TEXT, username TEXT NOT NULL, FOREIGN KEY (username) REFERENCES User (username));";
+
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(courseTableSql);
+
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
     }
   }
 

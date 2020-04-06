@@ -13,7 +13,7 @@ public class Course {
   private int credits;
   private int isCompulsory;
   private int period;
-  private String status;
+  private int status;
   private String courseLink;
 
   private User user;
@@ -25,13 +25,13 @@ public class Course {
    * @param credits      - number of credits course is worth
    * @param isCompulsory - is the course compulsory. 0: No, 1: Yes
    * @param period       - the period the course takes place in
-   * @param status       - current status of the course: backlog, ongoing,
-   *                     completed
+   * @param status       - current status of the course: 0: backlog, 1: ongoing,
+   *                     2: completed
    * @param courseLink   - url linking to the course
    * @param user         - the user the course belongs to
    */
 
-  public Course(String name, int credits, int isCompulsory, int period, String status, String courseLink, User user) {
+  public Course(String name, int credits, int isCompulsory, int period, int status, String courseLink, User user) {
     this.name = name;
     this.credits = credits;
     this.isCompulsory = isCompulsory;
@@ -41,17 +41,7 @@ public class Course {
     this.user = user;
   }
 
-  /**
-   * 
-   * @param name
-   * @param credits
-   * @param isCompulsory
-   * @param period
-   * @param status
-   * @param courseLink
-   */
-
-  public Course(String name, int credits, int isCompulsory, int period, String status, String courseLink) {
+  public Course(String name, int credits, int isCompulsory, int period, int status, String courseLink) {
     this.name = name;
     this.credits = credits;
     this.isCompulsory = isCompulsory;
@@ -60,11 +50,11 @@ public class Course {
     this.courseLink = courseLink;
   }
 
-  public String getStatus() {
+  public int getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
+  public void setStatus(int status) {
     this.status = status;
   }
 

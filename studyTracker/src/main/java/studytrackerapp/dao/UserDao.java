@@ -24,7 +24,6 @@ public class UserDao implements Dao<User, String> {
    */
   public UserDao(Database database) throws SQLException {
     this.database = database;
-    createTable();
   }
 
   /**
@@ -88,54 +87,22 @@ public class UserDao implements Dao<User, String> {
     return found;
   }
 
-  /**
-   * Updates a user's details
-   *
-   * @param user - User object to be updated
-   * @return true if setting succeeded; otherwise false
-   */
-  @Override
-  public User update(User user) {
-    // String sql = "UPDATE User SET credits = ? WHERE username = ?";
+  // @Override
+  // public User update(User user) {
+  // // TODO Auto-generated method stub
+  // return null;
+  // }
 
-    // try (Connection connection = database.getConnection();
-    // PreparedStatement statement = connection.prepareStatement(sql)) {
-    // statement.setInt(1, user.getCredits());
-    // statement.setString(2, user.getUsername());
-    // statement.executeUpdate();
-    // } catch (SQLException e) {
-    // return null;
-    // }
-    return null;
-    // return user;
-  }
+  // @Override
+  // public List list() {
+  // // TODO Auto-generated method stub
+  // return null;
+  // }
 
-  @Override
-  public List list() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+  // @Override
+  // public void delete(String key) {
+  // // TODO Auto-generated method stub
 
-  @Override
-  public void delete(String key) {
-    // TODO Auto-generated method stub
-
-  }
-
-  /**
-   * Creates a table for the object type in the db if one does not already exist
-   *
-   * @throws SQLException
-   */
-  @Override
-  public void createTable() throws SQLException {
-    String sql = "CREATE TABLE IF NOT EXISTS User (username TEXT PRIMARY KEY, name TEXT, password TEXT)";
-
-    try (Connection connection = database.getConnection(); Statement statement = connection.createStatement()) {
-      statement.execute(sql);
-    } catch (Exception e) {
-      System.err.println(e.getMessage());
-    }
-  }
+  // }
 
 }
