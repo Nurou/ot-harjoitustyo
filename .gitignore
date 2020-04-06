@@ -3,8 +3,7 @@
 /laskarit/viikko2/Unicafe/nbproject/
 
 /studyTracker/nb-configuration.xml
-
-
+**/.settings/*
 **/.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
