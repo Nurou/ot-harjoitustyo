@@ -27,21 +27,19 @@ public class UserService {
     // attempt to fetch user
     User user = userDao.read(username);
 
-    System.out.println("User read from db!");
+    System.out.println(user.getUsername() + " has been read successfully from the db.\n");
+    System.out.println("User details: " + user);
 
-    System.out.println(user);
-
-    // no such user or incorrect pass?
-    System.out.println();
-    if (user == null || user.getPassword() != password) {
-      System.out.println("db pass: " + user.getPassword());
-      System.out.println("param pass: " + password);
-      System.out.println("can't login!");
+    if (user == null || !password.equals(user.getPassword())) {
+      System.out.println("Db pass: " + user.getPassword());
+      System.out.println("Param pass: " + password);
+      System.out.println("Can't login!");
       return false;
     }
 
     // otherwise,
     this.currentlyLoggedIn = user;
+    System.out.println();
     System.out.println(username + " has logged in.");
     return true;
   }
@@ -57,8 +55,16 @@ public class UserService {
    * Logs user out
    *
    */
-  public void logout() {
+  public boolean logout() {
+
+    if (currentlyLoggedIn == null) {
+      System.out.println("No user has logged in.");
+      return false;
+    }
+
+    System.out.println(currentlyLoggedIn.getUsername() + " is logging out...");
     currentlyLoggedIn = null;
+    return true;
   }
 
   /**
@@ -70,11 +76,14 @@ public class UserService {
    * @param password
    * @return true if no issues in creating user
    */
-  public boolean newUser(String name, String username, String password) {
+  public boolean createNewUser(String username, String name, String password) {
+    // see if there exists a user with the same username
     if (userDao.read(username) != null) {
+      System.out.println("Username taken.");
       return false;
     }
     userDao.create(new User(name, username, password));
+    System.out.println("The user: " + username + " was created!");
     return true;
   }
 

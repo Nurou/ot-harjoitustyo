@@ -10,6 +10,7 @@
 | 31.03 | 4          | Set up database stuff, DAO classes, first tests                                                |
 | 03.04 | 1          | Work on database DAOs                                                                          |
 | 04.04 | 2          | Refactoring, inc. DAOs and Services                                                            |
+| 05.04 | 3          | Testing                                                                                        |
 |       |            |                                                                                                |
 |       |            |                                                                                                |
 |       |            |                                                                                                |

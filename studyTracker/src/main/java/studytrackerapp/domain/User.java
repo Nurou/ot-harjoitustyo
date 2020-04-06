@@ -63,8 +63,8 @@ public class User {
 
   @Override
   public String toString() {
-    return "{" + " name='" + getName() + "'" + ", username='" + getUsername() + "'" + ", password='" + getPassword()
-        + "'" + "'" + "}";
+    return "{\n" + " name='" + getName() + "', \n" + " username='" + getUsername() + "', \n" + " password='"
+        + getPassword() + "'\n" + "}";
   }
 
 }

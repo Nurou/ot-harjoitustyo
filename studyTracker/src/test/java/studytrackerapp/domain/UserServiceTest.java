@@ -22,7 +22,12 @@ public class UserServiceTest {
 
   }
 
-  /* runs before each test method */
+  /**
+   * runs before each test creates a db adds a single test user to it
+   * 
+   * @throws SQLException
+   */
+
   @Before
   public void setUp() throws SQLException {
 
@@ -32,7 +37,7 @@ public class UserServiceTest {
     userDao = new UserDao(database);
     userService = new UserService(userDao);
 
-    User user = new User("tester", "username", "password");
+    User user = new User("tester", "username", "testpass");
     userDao.create(user);
 
     System.out.println("Set up successful");
@@ -48,48 +53,43 @@ public class UserServiceTest {
   }
 
   @Test
-  public void userCanLogIn() {
-    userService.login("username", "password");
-    assertEquals("username", userService.getLoggedUser().getUsername());
-    // assertEquals("tester", userService.getLoggedUser().getName());
+  public void noLoggedInUserBeforeLogin() {
+    assertEquals(null, userService.getLoggedUser());
   }
 
-  // @Test
-  // public void userNotExistsAtLoginReturnFalse() {
-  // String username = "nope";
-  // boolean userExists = userService.login(username);
-  // assertFalse(userExists);
-  // }
+  @Test
+  public void userCanLogInWithValidCredentials() {
+    userService.login("username", "testpass");
+    assertEquals("username", userService.getLoggedUser().getUsername());
+    assertEquals("tester", userService.getLoggedUser().getName());
+  }
 
-  // @Test
-  // public void userCanLogOut() {
-  // String username = "tester";
-  // userService.login(username);
-  // userService.logout();
-  // assertEquals(null, userService.getLoggedUser());
-  // }
+  @Test
+  public void userCannotLogInWithInvalidCredentials() {
+    assertFalse(userService.login("username", "wrong password"));
+  }
 
-  // @Test
-  // public void canSuccessfullyCreateNewUniqueUser() {
-  // String username = "tester2";
-  // String name = "mister mister";
-  // boolean success = userService.newUser(username, name);
-  // assertTrue(success);
+  @Test
+  public void userCanBeLoggedOut() {
+    userService.login("username", "testpass");
+    assertTrue(userService.logout());
+    assertNull(userService.getLoggedUser());
+  }
 
-  // userService.login(username);
-  // assertEquals("tester2", userService.getLoggedUser().getUsername());
-  // assertEquals("mister mister", userService.getLoggedUser().getName());
-  // assertEquals(1, userService.getLoggedUser().getLevel());
-  // assertEquals(200, userService.getLoggedUser().getHealth());
-  // }
+  @Test
+  public void cannotLogOutAUserNotLoggedIn() {
+    assertFalse(userService.logout());
+  }
 
-  // @Test
-  // public void canOnlyCreateUserUniqueUsername() {
-  // String username = "tester";
-  // String name = "elon tusk";
-  // boolean success = userService.newUser(username, name);
-  // assertFalse(success);
-  // }
+  @Test
+  public void canCreateNewUserWithUniqueUsername() {
+    assertTrue(userService.createNewUser("unique", "unique-username-guy", "password"));
+    assertFalse(userService.createNewUser("unique", "non-unique-username-guy", "password"));
+  }
+
+  @Test
+  public void cannotCreateNewUserWithNonUniqueUsername() {
+  }
 
   // @Test
   // public void canAddExperience() {

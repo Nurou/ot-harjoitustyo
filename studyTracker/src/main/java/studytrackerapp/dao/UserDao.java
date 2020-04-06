@@ -76,11 +76,12 @@ public class UserDao implements Dao<User, String> {
       ResultSet resultSet = statement.executeQuery();
 
       // create user
-      found = new User(resultSet.getString("username"), resultSet.getString("name"), resultSet.getString("password"));
+      found = new User(resultSet.getString("name"), resultSet.getString("username"), resultSet.getString("password"));
 
     } catch (SQLException e) {
-      System.out.println("UserDao Error!");
-      System.err.println(e.getMessage());
+      System.out.println();
+      System.err.println("Error in UserDao - unable to retrieve user \n" + e.getMessage());
+      return found;
     }
 
     System.out.println(found.getUsername() + " retrieved successfully");
