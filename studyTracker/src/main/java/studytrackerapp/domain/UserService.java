@@ -29,8 +29,14 @@ public class UserService {
 
     System.out.println("User read from db!");
 
+    System.out.println(user);
+
     // no such user or incorrect pass?
+    System.out.println();
     if (user == null || user.getPassword() != password) {
+      System.out.println("db pass: " + user.getPassword());
+      System.out.println("param pass: " + password);
+      System.out.println("can't login!");
       return false;
     }
 
