@@ -108,8 +108,9 @@ public class Course {
 
   @Override
   public boolean equals(Object o) {
-    if (o == this)
+    if (o == this) {
       return true;
+    }
     if (!(o instanceof Course)) {
       return false;
     }

@@ -46,8 +46,9 @@ public class User {
 
   @Override
   public boolean equals(Object o) {
-    if (o == this)
+    if (o == this) {
       return true;
+    }
     if (!(o instanceof User)) {
       return false;
     }

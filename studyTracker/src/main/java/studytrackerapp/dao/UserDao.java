@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import studytrackerapp.domain.User;
 
@@ -87,22 +86,22 @@ public class UserDao implements Dao<User, String> {
     return found;
   }
 
-  // @Override
-  // public User update(User user) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
+  @Override
+  public User update(User user) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-  // @Override
-  // public List list() {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
+  @Override
+  public List list() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-  // @Override
-  // public void delete(String key) {
-  // // TODO Auto-generated method stub
+  @Override
+  public void delete(String key) {
+    // TODO Auto-generated method stub
 
-  // }
+  }
 
 }

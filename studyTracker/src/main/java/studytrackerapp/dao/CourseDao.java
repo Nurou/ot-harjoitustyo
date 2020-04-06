@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import studytrackerapp.domain.Course;
@@ -14,6 +13,7 @@ import studytrackerapp.domain.User;
  * Interface between Course objects and db courses
  *
  */
+
 public class CourseDao implements Dao<Course, String> {
 
   private Database database;
@@ -28,12 +28,13 @@ public class CourseDao implements Dao<Course, String> {
    *
    * @param user (owner of Todo objects to be queried)
    */
+
   public void setUser(User user) {
     this.user = user;
   }
 
   /**
-   * 
+   *
    * @return current user
    */
   public User getUser() {
@@ -47,6 +48,7 @@ public class CourseDao implements Dao<Course, String> {
    *               necessary info)
    * @return created Course object
    */
+
   @Override
   public Course create(Course course) {
     // define query
@@ -77,16 +79,15 @@ public class CourseDao implements Dao<Course, String> {
    *
    * @return List<Course>
    */
+
   @Override
   public List<Course> list() {
-
     List<Course> courses = new ArrayList<>();
 
     String sql = "SELECT name, credits, compulsory, period, status, course_link FROM Course WHERE username = ?";
 
     try (Connection connection = database.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
-
       System.out.println(this.user.getUsername());
       statement.setString(1, this.user.getUsername());
       ResultSet resultSet = statement.executeQuery();
@@ -94,12 +95,11 @@ public class CourseDao implements Dao<Course, String> {
       if (!resultSet.isBeforeFirst()) {
         System.out.println("No data");
       }
-      // extract query results & add to the course list
+
       while (resultSet.next()) {
         courses.add(new Course(resultSet.getString("name"), resultSet.getInt("credits"), resultSet.getInt("compulsory"),
             resultSet.getInt("period"), resultSet.getInt("status"), resultSet.getString("course_link"), this.user));
       }
-
     } catch (Exception e) {
       System.err.println(e.getMessage());
       return null;
@@ -140,16 +140,16 @@ public class CourseDao implements Dao<Course, String> {
     return found;
   }
 
-  // @Override
-  // public Course update(Course object) throws SQLException {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
+  @Override
+  public Course update(Course object) throws SQLException {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-  // @Override
-  // public void delete(String key) throws SQLException {
-  // // TODO Auto-generated method stub
+  @Override
+  public void delete(String key) throws SQLException {
+    // TODO Auto-generated method stub
 
-  // }
+  }
 
 }
