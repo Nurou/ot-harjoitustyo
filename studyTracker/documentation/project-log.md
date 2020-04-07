@@ -11,17 +11,7 @@
 | 03.04 | 1          | Work on database DAOs                                                                          |
 | 04.04 | 2          | Refactoring, inc. DAOs and Services                                                            |
 | 05.04 | 3          | Testing                                                                                        |
-|       |            |                                                                                                |
-|       |            |                                                                                                |
-|       |            |                                                                                                |
-|       |            |                                                                                                |
-|       |            |                                                                                                |
-|       |            |                                                                                                |
-|       |            |                                                                                                |
-|       |            |                                                                                                |
-|       |            |                                                                                                |
-|       |            |                                                                                                |
-|       |            |                                                                                                | ---------- |
+| 06.04 | 5          | Database configuration, further testing, added checkstyle                                      | ---------- |
 |       |            |
 |       |            |                                                                                                |
 |       |            |

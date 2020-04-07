@@ -22,7 +22,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.beans.*;
 import javafx.beans.property.ReadOnlyProperty;
 import studytrackerapp.dao.CourseDao;
 import studytrackerapp.dao.Database;
