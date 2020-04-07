@@ -27,7 +27,7 @@ The user interacts with the UI, and any events are handled by the courseService 
 
 The application data model consists of two classes: User and Course. There exists a one-to-many relationship between the two:
 
-![Course-User](https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/images/course_user.png)
+![Course-User](https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/images/course_user.jpg)
 
 All functionality is provided through two classes: courseService & userService. They handle all actions performed by the user, such as login, or adding a course. They do this by invoking the corresponding methods in the DAO classes, which are injected into the service classes as dependencies.
 
