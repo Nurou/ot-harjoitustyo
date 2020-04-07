@@ -4,6 +4,8 @@
 
 The program structure follows a layered architecture with three tiers. The package hierarchy is as follows:
 
+![Application Package Structure](https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/images/package_structure.png)
+
 The studytracker.ui package contains the application's user interface implemented in JavaFX, studytracker.domain the application logic, and studytracker.dao the functionality used to interact with the database.
 
 ## User Interface
@@ -24,8 +26,6 @@ The user interacts with the UI, and any events are handled by the courseService 
 ## Application logic
 
 The application data model consists of two classes: User and Course. There exists a one-to-many relationship between the two:
-
-[](documentation/images/package_structure.png)
 
 ## Data Persistence
 
