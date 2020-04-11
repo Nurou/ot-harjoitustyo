@@ -83,8 +83,8 @@ public class UserServiceTest {
 
   @Test
   public void canCreateNewUserWithUniqueUsername() {
-    assertTrue(userService.createUser("unique", "unique-username-guy", "password"));
-    assertFalse(userService.createUser("unique", "non-unique-username-guy", "password"));
+    assertTrue(userService.createUser("unique", "unique-username-guy", "password", "tkt", 180));
+    assertFalse(userService.createUser("unique", "non-unique-username-guy", "password", "tkt", 180));
   }
 
 }

@@ -2,6 +2,7 @@ package studytrackerapp.ui;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -12,11 +13,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -85,12 +89,12 @@ public class StudyTrackerUi extends Application {
   public void init() throws Exception {
 
     // Database
-    Database database = new Database();
+    var database = new Database();
     database.createDatabase("study-tracker.db");
 
-    // DAOs
-    UserDao userDao = new UserDao(database);
-    CourseDao courseDao = new CourseDao(database);
+    // Daos
+    var userDao = new UserDao(database);
+    var courseDao = new CourseDao(database);
 
     // Services
     userService = new UserService(userDao);
@@ -142,40 +146,45 @@ public class StudyTrackerUi extends Application {
 
   private Scene createLoginScene(Stage mainStage) {
     // containers
-    VBox loginContainer = new VBox(CONTAINER_SPACING); // this is the outer 'wrapper' box
-    VBox loginFieldGroup = new VBox(FIELD_GROUP_SPACING); // holds all input elements, nested within outer box
+
+    // the outer 'wrapper' box
+    var loginContainer = new VBox(CONTAINER_SPACING);
+    // container for input fields
+    var loginFieldGroup = new VBox(FIELD_GROUP_SPACING);
 
     // container styling
     loginContainer.setPadding(new Insets(CONTAINER_PADDING));
 
     // login input fields
-    Label usernameLabel = new Label("Username");
-    TextField usernameInput = new TextField();
+    var usernameLabel = new Label("Username");
+    var usernameInput = new TextField();
 
-    Label passwordLabel = new Label("Password");
-    TextField passwordInput = new TextField();
+    var passwordLabel = new Label("Password");
+    var passwordInput = new PasswordField();
 
     // add all field elements to field group
     loginFieldGroup.getChildren().addAll(usernameLabel, usernameInput, passwordLabel, passwordInput);
 
     // rest of login container elements
-    Label loginMessage = new Label("Welcome to Study Tracker!");
-    Label loginStatusMessage = new Label();
-    Button loginButton = new Button("Login");
-    Label createUserDirection = new Label("New User? Click Here To Sign Up");
-    Button createButton = new Button("Create User");
+    var loginMessage = new Label("Welcome to Study Tracker!");
+    var loginStatusMessage = new Label();
+    var loginButton = new Button("Login");
+    var createUserDirection = new Label("New User? Click Here To Sign Up");
+    var createButton = new Button("Create User");
 
     // on the user clicking to login
     loginButton.setOnAction(e -> {
       // get user info
-      String username = usernameInput.getText();
-      String password = passwordInput.getText();
+      var username = usernameInput.getText();
+      var password = passwordInput.getText();
+      System.out.println("user: " + username);
+      System.out.println("pass: " + password);
 
       // attempt login...
       if (userService.login(username, password)) {
         // all good!
         // get user details
-        User loggedUser = userService.getLoggedUser();
+        var loggedUser = userService.getLoggedUser();
         // assign user to courses
         courseService.assignUser(loggedUser);
         // direct user to manage their courses
@@ -231,22 +240,29 @@ public class StudyTrackerUi extends Application {
     createUserContainer.setPadding(new Insets(CONTAINER_PADDING));
 
     // fields
-    Label nameLabel = new Label("Name");
-    TextField newNameInput = new TextField();
-    Label newUsernameLabel = new Label("Username");
-    TextField newUsernameInput = new TextField();
-    Label newPasswordLabel = new Label("Password");
-    TextField newPasswordInput = new TextField();
-    Label createUserMessage = new Label();
+    var nameLabel = new Label("Name");
+    var newNameInput = new TextField();
+    var newUsernameLabel = new Label("Username");
+    var newUsernameInput = new TextField();
+    var newPasswordLabel = new Label("Password");
+    var newPasswordInput = new TextField();
+    var programNameLabel = new Label("Study Program");
+    var programNameInput = new TextField();
+    var targetCreditsLabel = new Label("Target Credits");
+    var targetCreditsInput = new TextField();
+    restrictToNumbers(targetCreditsInput);
+
+    // other elements
+    var createUserMessage = new Label();
 
     // add all field elements to field group
     createUserFieldGroup.getChildren().addAll(nameLabel, newNameInput, newUsernameLabel, newUsernameInput,
-        newPasswordLabel, newPasswordInput);
+        newPasswordLabel, newPasswordInput, programNameLabel, programNameInput, targetCreditsLabel, targetCreditsInput);
 
     // rest of createUser container elements
-    Button createUserButton = new Button("Create");
+    var createUserButton = new Button("Create");
     createUserButton.setPadding(new Insets(BUTTON_PADDING));
-    Button returnButton = new Button("Return");
+    var returnButton = new Button("Return");
     returnButton.setPadding(new Insets(BUTTON_PADDING));
 
     // add buttons to their container
@@ -254,9 +270,13 @@ public class StudyTrackerUi extends Application {
 
     // event handlers for buttons
     createUserButton.setOnAction(e -> {
-      String name = newNameInput.getText();
-      String username = newUsernameInput.getText();
-      String password = newPasswordInput.getText();
+      var name = newNameInput.getText();
+      var username = newUsernameInput.getText();
+      var password = newPasswordInput.getText();
+      var programName = programNameInput.getText();
+      var targetCredits = targetCreditsInput.getText();
+
+      System.out.println(targetCredits);
 
       // credentials validation
       if ((username.length() < MIN_USERNAME_LENGTH) || (name.length() < MIN_NAME_LENGTH)
@@ -273,7 +293,7 @@ public class StudyTrackerUi extends Application {
         return;
       }
 
-      if (userService.createUser(username, name, password)) {
+      if (userService.createUser(username, name, password, programName, Integer.parseInt(targetCredits))) {
         System.out.println("All good!");
         createUserMessage.setText("Success!");
         createUserMessage.setTextFill(Color.GREEN);
@@ -300,19 +320,37 @@ public class StudyTrackerUi extends Application {
 
   }
 
+  private void restrictToNumbers(TextField targetCreditsInput) {
+    // restrict credits input to numbers
+    UnaryOperator<Change> filter = change -> {
+      String text = change.getText();
+
+      if (text.matches("[0-9]*")) {
+        return change;
+      }
+
+      return null;
+    };
+
+    var textFormatter = new TextFormatter<>(filter);
+    targetCreditsInput.setTextFormatter(textFormatter);
+  }
+
   private Scene createCourseManagementScene(Stage mainStage) {
     // Containers
-    VBox manageCoursesContainer = new VBox();
+    var manageCoursesContainer = new VBox();
     manageCoursesContainer.setPadding(new Insets(10));
 
-    VBox profileContainer = new VBox();
+    var profileContainer = new VBox();
     profileContainer.setPadding(new Insets(10));
     profileContainer.setSpacing(20);
     profileContainer.setAlignment(Pos.TOP_CENTER);
 
-    Label welcomeMessage = new Label("Hey " + userService.getLoggedUser().getName() + "! Here's your profile");
-    Label progressBarMessage = new Label("Your progress so far:");
-    ProgressBar progressBar = new ProgressBar(0);
+    var usersName = userService.getLoggedUser() == null ? "" : userService.getLoggedUser().getName();
+
+    var welcomeMessage = new Label("Hey " + usersName + "! Here's your profile");
+    var progressBarMessage = new Label("Your progress so far:");
+    var progressBar = new ProgressBar(0);
 
     // add profile elements to their container
     profileContainer.getChildren().addAll(welcomeMessage, progressBarMessage, progressBar);
@@ -323,25 +361,25 @@ public class StudyTrackerUi extends Application {
     courseBoard.setPadding(new Insets(30));
 
     // column labels
-    Label backlog = new Label("Backlog");
-    Label ongoing = new Label("Ongoing");
-    Label completed = new Label("Completed");
+    var backlog = new Label("Backlog");
+    var ongoing = new Label("Ongoing");
+    var completed = new Label("Completed");
 
     // column areas
-    ScrollPane backlogScroll = new ScrollPane();
-    ScrollPane ongoingScroll = new ScrollPane();
-    ScrollPane completedScroll = new ScrollPane();
+    var backlogScroll = new ScrollPane();
+    var ongoingScroll = new ScrollPane();
+    var completedScroll = new ScrollPane();
 
     // put labels and areas together to form column
-    VBox backlogColumn = new VBox(15);
+    var backlogColumn = new VBox(15);
     backlogColumn.setMinWidth(250);
     backlogColumn.getChildren().add(backlog);
     backlogColumn.getChildren().add(backlogScroll);
-    VBox ongoingColumn = new VBox(15);
+    var ongoingColumn = new VBox(15);
     ongoingColumn.setMinWidth(250);
     ongoingColumn.getChildren().add(ongoing);
     ongoingColumn.getChildren().add(ongoingScroll);
-    VBox completedColumn = new VBox(15);
+    var completedColumn = new VBox(15);
     completedColumn.setMinWidth(250);
     completedColumn.getChildren().add(completed);
     completedColumn.getChildren().add(completedScroll);
@@ -353,7 +391,7 @@ public class StudyTrackerUi extends Application {
     courseBoard.setAlignment(Pos.BASELINE_CENTER);
 
     // buttons
-    Button logoutButton = new Button("Logout");
+    var logoutButton = new Button("Logout");
     logoutButton.setOnAction(e -> {
       userService.logout();
       mainStage.setScene(loginScene);
@@ -361,14 +399,14 @@ public class StudyTrackerUi extends Application {
 
     logoutButton.setAlignment(Pos.BASELINE_LEFT);
 
-    Button addCourseButton = new Button("Add Course");
+    var addCourseButton = new Button("Add Course");
     addCourseButton.setOnAction(e -> {
       mainStage.setScene(newCourseScene);
     });
 
     addCourseButton.setAlignment(Pos.BASELINE_RIGHT);
 
-    ToggleButton modifyCourseButton = new ToggleButton("Modify Courses");
+    var modifyCourseButton = new ToggleButton("Modify Courses");
     modifyCourseButton.setOnAction(e -> {
 
     });
@@ -376,7 +414,7 @@ public class StudyTrackerUi extends Application {
     modifyCourseButton.setAlignment(Pos.BASELINE_RIGHT);
 
     // other components
-    Separator separator = new Separator(Orientation.HORIZONTAL);
+    var separator = new Separator(Orientation.HORIZONTAL);
 
     // add everything to the container
     manageCoursesContainer.getChildren().addAll(profileContainer, separator, courseBoard, logoutButton, addCourseButton,
@@ -388,35 +426,35 @@ public class StudyTrackerUi extends Application {
 
   private Scene createNewCourseScene(Stage mainStage) {
     // container for field group
-    VBox courseFieldGroup = new VBox();
+    var courseFieldGroup = new VBox();
     courseFieldGroup.setPadding(new Insets(10));
 
     // individual fields
-    Label courseNameLabel = new Label("Name");
-    TextField courseNameInput = new TextField();
+    var courseNameLabel = new Label("Name");
+    var courseNameInput = new TextField();
 
-    Label courseCredits = new Label("Credits");
-    TextField courseCreditsInput = new TextField();
+    var courseCredits = new Label("Credits");
+    var courseCreditsInput = new TextField();
 
-    Label coursePeriod = new Label("Period");
-    TextField coursePeriodInput = new TextField();
+    var coursePeriod = new Label("Period");
+    var coursePeriodInput = new TextField();
 
     // add fields to field group
     courseFieldGroup.getChildren().addAll(courseNameLabel, courseNameInput, courseCredits, courseCreditsInput,
         coursePeriod, coursePeriodInput);
 
     // horizontal container for checkbox selection - course mandatory or not
-    HBox statusContainer = new HBox();
-    Label mandatoryLabel = new Label("Mandatory: ");
+    var statusContainer = new HBox();
+    var mandatoryLabel = new Label("Mandatory: ");
 
     // allow only one checkbox to be selected at once
-    String[] options = new String[] { "Yes", "No" };
-    final int maxCount = 1;
-    final Set<CheckBox> activeBoxes = new LinkedHashSet<>();
+    var options = new String[] { "Yes", "No" };
+    final var maxCount = 1;
+    final var activeBoxes = new LinkedHashSet<CheckBox>();
 
     ChangeListener<Boolean> listener = (o, oldValue, newValue) -> {
       // get checkbox containing property
-      CheckBox cb = (CheckBox) ((ReadOnlyProperty<Boolean>) o).getBean();
+      var cb = (CheckBox) ((ReadOnlyProperty<Boolean>) o).getBean();
 
       if (newValue) {
         activeBoxes.add(cb);
@@ -435,19 +473,19 @@ public class StudyTrackerUi extends Application {
     // create checkboxes
     statusContainer.getChildren().add(mandatoryLabel);
     for (int i = 0; i < options.length; i++) {
-      CheckBox cb = new CheckBox(options[i]);
+      var cb = new CheckBox(options[i]);
       cb.selectedProperty().addListener(listener);
       statusContainer.getChildren().add(cb);
     }
 
     // buttons
-    Button addCourseButton = new Button("Add");
+    var addCourseButton = new Button("Add");
     addCourseButton.setOnAction(e -> {
       // logic when course is added...
     });
 
     // place containers inside outer container
-    BorderPane wrapperContainer = new BorderPane();
+    var wrapperContainer = new BorderPane();
     wrapperContainer.setTop(courseFieldGroup);
     wrapperContainer.setCenter(statusContainer);
     wrapperContainer.setCenter(addCourseButton);

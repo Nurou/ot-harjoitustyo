@@ -5,21 +5,17 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 
 import studytrackerapp.dao.CourseDao;
 import studytrackerapp.dao.Database;
-import studytrackerapp.dao.UserDao;
 
 public class CourseServiceTest {
 
   private CourseDao courseDao;
-  private UserDao userDao;
   private CourseService courseService;
-  private UserService userService;
   private Database database;
 
   /**
@@ -55,7 +51,7 @@ public class CourseServiceTest {
     courseService.assignUser(user);
     assertNotNull(courseService.retrieveUser());
 
-    assertTrue(courseService.createCourse("test-course", 3, 1, 2, 2, "https://mooc.helsinki.fi/"));
+    assertTrue(courseService.createCourse("test-course", 3, 1, 2, "https://mooc.helsinki.fi/"));
 
   }
 
@@ -64,9 +60,8 @@ public class CourseServiceTest {
     User user = new User("username", "test-user", "password", "tkt", 180);
     courseService.assignUser(user);
 
-    courseService.createCourse("first course", 3, 1, 2, 2, "https://mooc.helsinki.fi/");
-
-    courseService.createCourse("second course", 3, 1, 2, 2, "https://mooc.helsinki.fi/");
+    courseService.createCourse("first course", 3, 1, 2, "https://mooc.helsinki.fi/");
+    courseService.createCourse("second course", 3, 1, 2, "https://mooc.helsinki.fi/");
 
     assertEquals("first course", courseService.getCourses().get(0).getName());
     assertEquals("second course", courseService.getCourses().get(1).getName());
@@ -79,14 +74,14 @@ public class CourseServiceTest {
 
   @Test
   public void sameCourseCannotBeAddedTwiceForSameUser() {
-    User user = new User("username", "test-user", "password");
+    User user = new User("username", "test-user", "password", "tkt", 180);
     courseService.assignUser(user);
 
-    assertTrue(courseService.createCourse("test-course", 3, 1, 2, 2, "https://mooc.helsinki.fi/"));
+    assertTrue(courseService.createCourse("test-course", 3, 1, 2, "https://mooc.helsinki.fi/"));
 
     courseService.getCourses();
 
-    assertFalse(courseService.createCourse("test-course", 3, 1, 2, 2, "https://mooc.helsinki.fi/"));
+    assertFalse(courseService.createCourse("test-course", 3, 1, 2, "https://mooc.helsinki.fi/"));
 
   }
 

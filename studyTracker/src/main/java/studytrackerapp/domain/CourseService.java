@@ -48,7 +48,7 @@ public class CourseService {
    * @return true if course was created, false otherwise
    */
 
-  public boolean createCourse(String name, int credits, int isCompulsory, int period, int status, String courseLink) {
+  public boolean createCourse(String name, int credits, int isCompulsory, int status, String courseLink) {
 
     for (Course course : courses) {
       if (course.getName().equals(name)) {

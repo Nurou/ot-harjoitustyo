@@ -80,14 +80,14 @@ public class UserService {
    * @param password
    * @return true if no issues in creating user
    */
-  public boolean createUser(String username, String name, String password) {
+  public boolean createUser(String username, String name, String password, String programName, int targetCredits) {
     // see if there exists a user with the same username
     if (userDao.read(username) != null) {
       System.out.println("Username taken.");
       return false;
     }
 
-    User user = userDao.create(new User(name, username, password));
+    User user = userDao.create(new User(name, username, password, programName, targetCredits));
 
     if (user != null) {
       System.out.println("The user: " + username + " was created!");
