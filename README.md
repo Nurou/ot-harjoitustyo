@@ -1,6 +1,8 @@
 # 🍊 StudyTracker
 
-StudyTracker is a desktop application designed to enable a student to keep track of their studies. It keeps the student abreast of their overall progress and features a board allowing the users to mark the completion status of individual courses.
+StudyTracker is a desktop application that helps a student to keep track of their studies. The student can use it to monitor their overall progress through the help of a board.
+
+It's built in Java, JavaFX has been used for the UI, and SQLite for data storage.
 
 ## Documentation
 
