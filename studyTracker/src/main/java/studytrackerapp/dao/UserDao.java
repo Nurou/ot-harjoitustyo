@@ -33,7 +33,7 @@ public class UserDao implements Dao<User, String> {
   @Override
   public User create(User user) {
     // define query
-    String sql = "INSERT INTO " + "User(username, name, password) " + "VALUES (?, ?, ?)";
+    String sql = "INSERT INTO " + "User(username, name, password, program_name, target ) " + "VALUES (?, ?, ?, ?, ?)";
 
     try (Connection connection = database.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -61,7 +61,7 @@ public class UserDao implements Dao<User, String> {
     User found = null;
 
     // define query
-    String sql = "SELECT username, name, password FROM User WHERE username = ?";
+    String sql = "SELECT username, name, password, program_name, target_credits FROM User WHERE username = ?";
 
     // attempt to form a connection
     try (Connection connection = database.getConnection();
@@ -74,7 +74,8 @@ public class UserDao implements Dao<User, String> {
       ResultSet resultSet = statement.executeQuery();
 
       // create user
-      found = new User(resultSet.getString("name"), resultSet.getString("username"), resultSet.getString("password"));
+      found = new User(resultSet.getString("name"), resultSet.getString("username"), resultSet.getString("password"),
+          resultSet.getString("program_name"), resultSet.getInt("target_credits"));
 
     } catch (SQLException e) {
       System.out.println();
@@ -93,7 +94,7 @@ public class UserDao implements Dao<User, String> {
   }
 
   @Override
-  public List list() {
+  public List<User> list() {
     // TODO Auto-generated method stub
     return null;
   }

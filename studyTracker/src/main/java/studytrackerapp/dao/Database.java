@@ -66,30 +66,37 @@ public class Database {
   /**
    * Adds the required tables to the db
    * 
-   * @param connection
+   * @param connection - the context in which the queries are executed
    * @throws SQLException
    */
-  public void createTables(Connection connection) throws SQLException {
-    String userTableSql = "CREATE TABLE IF NOT EXISTS User (username TEXT PRIMARY KEY, name TEXT, password TEXT)";
+  public boolean createTables(Connection connection) throws SQLException {
+    String userTableSql = "CREATE TABLE IF NOT EXISTS User (username TEXT PRIMARY KEY, name TEXT, password TEXT, program_name TEXT, target_credits INTEGER)";
 
     try (Statement statement = connection.createStatement()) {
       statement.execute(userTableSql);
     } catch (Exception e) {
       System.err.println(e.getMessage());
+      return false;
     }
 
-    String courseTableSql = "CREATE TABLE IF NOT EXISTS Course (id INTEGER PRIMARY KEY, name TEXT, credits INTEGER NOT NULL, compulsory INTEGER NOT NULL, period INTEGER NOT NULL, status INTEGER NOT NULL, course_link TEXT, username TEXT NOT NULL, FOREIGN KEY (username) REFERENCES User (username));";
+    String courseTableSql = "CREATE TABLE IF NOT EXISTS Course (id INTEGER PRIMARY KEY, name TEXT, credits INTEGER NOT NULL, compulsory INTEGER NOT NULL, status INTEGER NOT NULL, course_link TEXT, username TEXT NOT NULL, FOREIGN KEY (username) REFERENCES User (username));";
 
     try (Statement statement = connection.createStatement()) {
       statement.execute(courseTableSql);
 
     } catch (Exception e) {
       System.err.println(e.getMessage());
+      return false;
     }
+    return true;
   }
 
-  private void setPath(String path) {
+  public void setPath(String path) {
     this.path = path;
+  }
+
+  public String getPath() {
+    return this.path;
   }
 
 }

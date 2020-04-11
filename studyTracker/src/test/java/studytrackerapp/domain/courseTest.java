@@ -31,4 +31,12 @@ public class CourseTest {
     Object o = new Object();
     assertFalse(c.equals(o));
   }
+
+  // @Test
+  // public void courseNotEqualToObjectOfDifferentType() {
+  // Course c = new Course("course", 5, 0, 1, 1, "link", new User("person",
+  // "user", "pass"));
+  // Object o = new Object();
+  // assertFalse(c.equals(o));
+  // }
 }

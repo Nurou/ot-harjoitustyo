@@ -21,6 +21,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.beans.property.ReadOnlyProperty;
 import studytrackerapp.dao.CourseDao;
@@ -106,8 +108,11 @@ public class StudyTrackerUi extends Application {
      */
 
     loginScene = createLoginScene(mainStage);
+
     newUserScene = createNewUserScene(mainStage);
+
     courseManagementScene = createCourseManagementScene(mainStage);
+
     newCourseScene = createNewCourseScene(mainStage);
 
     // ---------------------------------------
@@ -155,31 +160,50 @@ public class StudyTrackerUi extends Application {
 
     // rest of login container elements
     Label loginMessage = new Label("Welcome to Study Tracker!");
+    Label loginStatusMessage = new Label();
     Button loginButton = new Button("Login");
     Label createUserDirection = new Label("New User? Click Here To Sign Up");
     Button createButton = new Button("Create User");
 
-    // event handlers for buttons
-    // TODO: abstract these away to a method
+    // on the user clicking to login
     loginButton.setOnAction(e -> {
+      // get user info
       String username = usernameInput.getText();
       String password = passwordInput.getText();
 
-      // mainStage.setScene(newUserScene);
-      // TODO: login logic
-      // login only with valid credentials
+      // attempt login...
+      if (userService.login(username, password)) {
+        // all good!
+        // get user details
+        User loggedUser = userService.getLoggedUser();
+        // assign user to courses
+        courseService.assignUser(loggedUser);
+        // direct user to manage their courses
+        mainStage.setScene(courseManagementScene);
+      } else {
+        // login unsuccessful
+        loginStatusMessage
+            .setText("Invalid credentials, or the user: '  " + username + "' has not been created. Try again.");
 
-      mainStage.setScene(courseManagementScene);
+        // display message
+        loginStatusMessage.setTextFill(Color.RED);
+        loginStatusMessage.setFont(Font.font(null, FontWeight.BOLD, 18));
+      }
+      // reset fields
+      usernameInput.clear();
+      passwordInput.clear();
     });
 
+    // user wants to create a new account
     createButton.setOnAction(e -> {
       usernameInput.setText("");
       passwordInput.setText("");
       mainStage.setScene(newUserScene);
     });
 
-    // add everything to the outer container
-    loginContainer.getChildren().addAll(loginMessage, loginFieldGroup, loginButton, createUserDirection, createButton);
+    // add all components to the outer container
+    loginContainer.getChildren().addAll(loginMessage, loginStatusMessage, loginFieldGroup, loginButton,
+        createUserDirection, createButton);
 
     // loginContainer.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
 
@@ -194,9 +218,17 @@ public class StudyTrackerUi extends Application {
   private Scene createNewUserScene(Stage mainStage) {
 
     // containers
-    VBox createUserContainer = new VBox(CONTAINER_SPACING);
-    VBox createUserFieldGroup = new VBox(FIELD_GROUP_SPACING);
+    // main
+    var createUserContainer = new VBox(CONTAINER_SPACING);
+    // container for fields
+    var createUserFieldGroup = new VBox(FIELD_GROUP_SPACING);
     createUserFieldGroup.setPadding(new Insets(FIELD_GROUP_PADDING));
+    // container for buttons
+    var buttonContainer = new HBox(FIELD_GROUP_SPACING);
+    buttonContainer.setPadding(new Insets(FIELD_GROUP_PADDING));
+
+    // container styling
+    createUserContainer.setPadding(new Insets(CONTAINER_PADDING));
 
     // fields
     Label nameLabel = new Label("Name");
@@ -205,7 +237,7 @@ public class StudyTrackerUi extends Application {
     TextField newUsernameInput = new TextField();
     Label newPasswordLabel = new Label("Password");
     TextField newPasswordInput = new TextField();
-    Label userCreationMessage = new Label();
+    Label createUserMessage = new Label();
 
     // add all field elements to field group
     createUserFieldGroup.getChildren().addAll(nameLabel, newNameInput, newUsernameLabel, newUsernameInput,
@@ -214,6 +246,11 @@ public class StudyTrackerUi extends Application {
     // rest of createUser container elements
     Button createUserButton = new Button("Create");
     createUserButton.setPadding(new Insets(BUTTON_PADDING));
+    Button returnButton = new Button("Return");
+    returnButton.setPadding(new Insets(BUTTON_PADDING));
+
+    // add buttons to their container
+    buttonContainer.getChildren().addAll(createUserButton, returnButton);
 
     // event handlers for buttons
     createUserButton.setOnAction(e -> {
@@ -221,20 +258,42 @@ public class StudyTrackerUi extends Application {
       String username = newUsernameInput.getText();
       String password = newPasswordInput.getText();
 
-      if (username.length() < MIN_USERNAME_LENGTH || name.length() < MIN_NAME_LENGTH
-          || password.length() < MIN_PASS_LENGTH) {
-        userCreationMessage.setText("The username, password, or name entered was too short");
-        userCreationMessage.setTextFill(Color.RED);
+      // credentials validation
+      if ((username.length() < MIN_USERNAME_LENGTH) || (name.length() < MIN_NAME_LENGTH)
+          || (password.length() < MIN_PASS_LENGTH)) {
+        createUserMessage.setText("Either the username, password, or name that was entered was too short.");
+        createUserMessage.setTextFill(Color.RED);
+        createUserMessage.setFont(Font.font(null, FontWeight.BOLD, 18));
 
+        // clear fields
+        newNameInput.clear();
+        newUsernameInput.clear();
+        newPasswordInput.clear();
+
+        return;
+      }
+
+      if (userService.createUser(username, name, password)) {
+        System.out.println("All good!");
+        createUserMessage.setText("Success!");
+        createUserMessage.setTextFill(Color.GREEN);
+        createUserMessage.setFont(Font.font(null, FontWeight.BOLD, 18));
+        mainStage.setScene(loginScene);
+        return;
       } else {
-        userCreationMessage.setText("username has to be unique");
-        userCreationMessage.setTextFill(Color.RED);
+        createUserMessage.setText("A user with the username: '" + username + "' already exists.");
+        createUserMessage.setTextFill(Color.RED);
+        return;
       }
 
     });
 
-    // add everything to the container
-    createUserContainer.getChildren().addAll(createUserFieldGroup, createUserButton);
+    returnButton.setOnAction(e -> {
+      mainStage.setScene(loginScene);
+    });
+
+    // add nested containers to main container
+    createUserContainer.getChildren().addAll(createUserMessage, createUserFieldGroup, buttonContainer);
 
     // place container within view
     return new Scene(createUserContainer, CREATE_USER_WIDTH, CREATE_USER_HEIGHT);
@@ -251,7 +310,7 @@ public class StudyTrackerUi extends Application {
     profileContainer.setSpacing(20);
     profileContainer.setAlignment(Pos.TOP_CENTER);
 
-    Label welcomeMessage = new Label("Hello *user*! Here's your profile");
+    Label welcomeMessage = new Label("Hey " + userService.getLoggedUser().getName() + "! Here's your profile");
     Label progressBarMessage = new Label("Your progress so far:");
     ProgressBar progressBar = new ProgressBar(0);
 
@@ -296,6 +355,7 @@ public class StudyTrackerUi extends Application {
     // buttons
     Button logoutButton = new Button("Logout");
     logoutButton.setOnAction(e -> {
+      userService.logout();
       mainStage.setScene(loginScene);
     });
 

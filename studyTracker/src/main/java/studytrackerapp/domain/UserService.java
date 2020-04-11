@@ -27,10 +27,11 @@ public class UserService {
     // attempt to fetch user
     User user = userDao.read(username);
 
-    System.out.println(user.getUsername() + " has been read successfully from the db.\n");
-    System.out.println("User details: " + user);
+    if (user == null) {
+      return false;
+    }
 
-    if (user == null || !password.equals(user.getPassword())) {
+    if (!(password.equals(user.getPassword()))) {
       System.out.println("Db pass: " + user.getPassword());
       System.out.println("Param pass: " + password);
       System.out.println("Can't login!");
@@ -38,6 +39,9 @@ public class UserService {
     }
 
     // otherwise,
+    System.out.println(user.getUsername() + " has been read successfully from the db");
+    System.out.println("User details: " + user);
+    // set them as logged in
     this.currentlyLoggedIn = user;
     System.out.println();
     System.out.println(username + " has logged in.");
@@ -82,9 +86,15 @@ public class UserService {
       System.out.println("Username taken.");
       return false;
     }
-    userDao.create(new User(name, username, password));
-    System.out.println("The user: " + username + " was created!");
-    return true;
+
+    User user = userDao.create(new User(name, username, password));
+
+    if (user != null) {
+      System.out.println("The user: " + username + " was created!");
+      return true;
+    }
+
+    return false;
   }
 
 }

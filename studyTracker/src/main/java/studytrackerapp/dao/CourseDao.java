@@ -24,9 +24,8 @@ public class CourseDao implements Dao<Course, String> {
   }
 
   /**
-   * Sets current user
    *
-   * @param user (owner of Todo objects to be queried)
+   * @param user - user that the course is attached to
    */
 
   public void setUser(User user) {
@@ -35,14 +34,15 @@ public class CourseDao implements Dao<Course, String> {
 
   /**
    *
-   * @return current user
+   * @return user that is to be assigned to the course
    */
+
   public User getUser() {
     return this.user;
   }
 
   /**
-   * Adds a new course into the database each course belongs to a specific user
+   * Adds a new course entity into the database
    *
    * @param course - the Course to be added to the database (holds all the
    *               necessary info)
@@ -52,7 +52,7 @@ public class CourseDao implements Dao<Course, String> {
   @Override
   public Course create(Course course) {
     // define query
-    String sql = "INSERT INTO Course(name, credits, compulsory, period, status, course_link, username) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO Course(name, credits, compulsory, status, course_link, username) VALUES (?, ?, ?, ?, ?, ?)";
 
     try (Connection connection = database.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -60,10 +60,9 @@ public class CourseDao implements Dao<Course, String> {
       statement.setString(1, course.getName());
       statement.setInt(2, course.getCredits());
       statement.setInt(3, course.getIsCompulsory());
-      statement.setInt(4, course.getPeriod());
-      statement.setInt(5, course.getStatus());
-      statement.setString(6, course.getCourseLink());
-      statement.setString(7, this.user.getUsername());
+      statement.setInt(4, course.getStatus());
+      statement.setString(5, course.getCourseLink());
+      statement.setString(6, this.user.getUsername());
       statement.executeUpdate();
     } catch (SQLException e) {
       // nothing returned if a course was not created
@@ -84,7 +83,7 @@ public class CourseDao implements Dao<Course, String> {
   public List<Course> list() {
     List<Course> courses = new ArrayList<>();
 
-    String sql = "SELECT name, credits, compulsory, period, status, course_link FROM Course WHERE username = ?";
+    String sql = "SELECT name, credits, compulsory, status, course_link FROM Course WHERE username = ?";
 
     try (Connection connection = database.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -98,7 +97,7 @@ public class CourseDao implements Dao<Course, String> {
 
       while (resultSet.next()) {
         courses.add(new Course(resultSet.getString("name"), resultSet.getInt("credits"), resultSet.getInt("compulsory"),
-            resultSet.getInt("period"), resultSet.getInt("status"), resultSet.getString("course_link"), this.user));
+            resultSet.getInt("status"), resultSet.getString("course_link"), this.user));
       }
     } catch (Exception e) {
       System.err.println(e.getMessage());
@@ -128,7 +127,7 @@ public class CourseDao implements Dao<Course, String> {
 
       // create course
       found = new Course(resultSet.getString("name"), resultSet.getInt("credits"), resultSet.getInt("compulsory"),
-          resultSet.getInt("period"), resultSet.getInt("status"), resultSet.getString("course_link"));
+          resultSet.getInt("status"), resultSet.getString("course_link"));
 
     } catch (SQLException e) {
       System.out.println();

@@ -33,6 +33,10 @@ public class CourseService {
     courseDao.setUser(user);
   }
 
+  /**
+   * 
+   * @return the user whose courses are being queried/manipulated
+   */
   public User retrieveUser() {
     return courseDao.getUser();
   }
@@ -54,7 +58,7 @@ public class CourseService {
     }
 
     try {
-      Course newCourse = courseDao.create(new Course(name, credits, isCompulsory, period, status, courseLink));
+      Course newCourse = courseDao.create(new Course(name, credits, isCompulsory, status, courseLink));
 
       if (newCourse != null) {
         System.out.println("Course '" + name + "' added");

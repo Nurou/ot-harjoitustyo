@@ -51,7 +51,7 @@ public class CourseServiceTest {
 
   @Test
   public void courseCanBeCreated() {
-    User user = new User("username", "test-user", "password");
+    User user = new User("username", "test-user", "password", "tkt", 180);
     courseService.assignUser(user);
     assertNotNull(courseService.retrieveUser());
 
@@ -61,7 +61,7 @@ public class CourseServiceTest {
 
   @Test
   public void usersCoursesCanBeListed() {
-    User user = new User("username", "test-user", "password");
+    User user = new User("username", "test-user", "password", "tkt", 180);
     courseService.assignUser(user);
 
     courseService.createCourse("first course", 3, 1, 2, 2, "https://mooc.helsinki.fi/");
@@ -78,7 +78,7 @@ public class CourseServiceTest {
   }
 
   @Test
-  public void sameCourseCannotBeAddedTwice() {
+  public void sameCourseCannotBeAddedTwiceForSameUser() {
     User user = new User("username", "test-user", "password");
     courseService.assignUser(user);
 

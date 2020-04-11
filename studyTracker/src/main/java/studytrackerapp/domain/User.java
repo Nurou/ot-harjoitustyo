@@ -10,14 +10,27 @@ public class User {
   private String name;
   private String username;
   private String password;
+  private String studyProgram;
+  private int targetCredits;
 
-  public User(String name, String username, String password) {
+  public User() {
+  }
+
+  /**
+   * 
+   * @param name
+   * @param username
+   * @param password
+   * @param studyProgram - name of the program the student is studying
+   * @param target
+   */
+
+  public User(String name, String username, String password, String studyProgram, int target) {
     this.name = name;
     this.username = username;
     this.password = password;
-  }
-
-  public User() {
+    this.studyProgram = studyProgram;
+    this.targetCredits = target;
   }
 
   public String getName() {
@@ -44,28 +57,69 @@ public class User {
     this.password = password;
   }
 
+  public String getStudyProgram() {
+    return this.studyProgram;
+  }
+
+  public void setStudyProgram(String studyProgram) {
+    this.studyProgram = studyProgram;
+  }
+
+  public int getTarget() {
+    return this.targetCredits;
+  }
+
+  public void setTarget(int target) {
+    this.targetCredits = target;
+  }
+
+  public User name(String name) {
+    this.name = name;
+    return this;
+  }
+
+  public User username(String username) {
+    this.username = username;
+    return this;
+  }
+
+  public User password(String password) {
+    this.password = password;
+    return this;
+  }
+
+  public User studyProgram(String studyProgram) {
+    this.studyProgram = studyProgram;
+    return this;
+  }
+
+  public User target(int target) {
+    this.targetCredits = target;
+    return this;
+  }
+
   @Override
   public boolean equals(Object o) {
-    if (o == this) {
+    if (o == this)
       return true;
-    }
     if (!(o instanceof User)) {
       return false;
     }
     User user = (User) o;
     return Objects.equals(name, user.name) && Objects.equals(username, user.username)
-        && Objects.equals(password, user.password);
+        && Objects.equals(password, user.password) && Objects.equals(studyProgram, user.studyProgram)
+        && targetCredits == user.targetCredits;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, username, password);
+    return Objects.hash(name, username, password, studyProgram, targetCredits);
   }
 
   @Override
   public String toString() {
-    return "{\n" + " name='" + getName() + "', \n" + " username='" + getUsername() + "', \n" + " password='"
-        + getPassword() + "'\n" + "}";
+    return "{" + " name='" + getName() + "'" + ", username='" + getUsername() + "'" + ", password='" + getPassword()
+        + "'" + ", studyProgram='" + getStudyProgram() + "'" + ", target='" + getTarget() + "'" + "}";
   }
 
 }
