@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import org.junit.After;
 import org.junit.Before;
 
+import studytrackerapp.dao.CourseDao;
 import studytrackerapp.dao.Database;
 import studytrackerapp.dao.UserDao;
 
@@ -79,6 +80,16 @@ public class UserServiceTest {
   @Test
   public void cannotLogOutAUserNotLoggedIn() {
     assertFalse(userService.logout());
+  }
+
+  @Test
+  public void loggedUsersNameCanBeFetched() {
+    var username = "unique";
+    var name = "unique-username-guy";
+    var password = "password";
+    userService.createUser(username, name, password, "tkt", 180);
+    userService.login(username, password);
+    assertEquals("unique-username-guy", userService.getLoggedUser().getName());
   }
 
   @Test
