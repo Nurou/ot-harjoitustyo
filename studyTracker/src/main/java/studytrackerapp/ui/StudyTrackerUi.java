@@ -1,7 +1,6 @@
 package studytrackerapp.ui;
 
 import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.function.UnaryOperator;
 
 import javafx.application.Application;
@@ -207,6 +206,7 @@ public class StudyTrackerUi extends Application {
     createButton.setOnAction(e -> {
       usernameInput.setText("");
       passwordInput.setText("");
+      loginStatusMessage.setText("");
       mainStage.setScene(newUserScene);
     });
 
@@ -292,6 +292,12 @@ public class StudyTrackerUi extends Application {
 
         return;
       }
+
+      System.out.println(username);
+      System.out.println(name);
+      System.out.println(password);
+      System.out.println(programName);
+      System.out.println(Integer.parseInt(targetCredits));
 
       if (userService.createUser(username, name, password, programName, Integer.parseInt(targetCredits))) {
         System.out.println("All good!");

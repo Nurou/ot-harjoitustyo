@@ -1,8 +1,6 @@
 
 package studytrackerapp.domain;
 
-import java.util.Objects;
-
 /**
  * Class representing a course studied by the user
  */

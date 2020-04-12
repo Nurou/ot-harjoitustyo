@@ -33,7 +33,8 @@ public class UserDao implements Dao<User, String> {
   @Override
   public User create(User user) {
     // define query
-    String sql = "INSERT INTO " + "User(username, name, password, program_name, target ) " + "VALUES (?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO " + "User(username, name, password, program_name, target_credits ) "
+        + "VALUES (?, ?, ?, ?, ?)";
 
     try (Connection connection = database.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -41,6 +42,8 @@ public class UserDao implements Dao<User, String> {
       statement.setString(1, user.getUsername());
       statement.setString(2, user.getName());
       statement.setString(3, user.getPassword());
+      statement.setString(4, user.getStudyProgram());
+      statement.setInt(5, user.getTarget());
       statement.executeUpdate();
     } catch (SQLException e) {
       return null;
