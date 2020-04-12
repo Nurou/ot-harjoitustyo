@@ -29,7 +29,9 @@ public class UserDao implements Dao<User, String> {
    * @param user - the user to be mirrored in the db
    * @return User - the User object provided as an argument, null if user could
    *         not be created
+   * 
    */
+
   @Override
   public User create(User user) {
     // define query
