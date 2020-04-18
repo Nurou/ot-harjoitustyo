@@ -91,8 +91,10 @@ public class CourseDao implements Dao<Course, String> {
       statement.setString(1, this.user.getUsername());
       ResultSet resultSet = statement.executeQuery();
 
+      // checking if there are any results
       if (!resultSet.isBeforeFirst()) {
         System.out.println("No data");
+        return null;
       }
 
       while (resultSet.next()) {

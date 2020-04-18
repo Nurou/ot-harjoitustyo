@@ -52,6 +52,9 @@ public class UserService {
    * @return logged in user
    */
   public User getLoggedUser() {
+    if (this.currentlyLoggedIn == null) {
+      return null;
+    }
     return this.currentlyLoggedIn;
   }
 

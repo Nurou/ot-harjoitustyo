@@ -5,6 +5,8 @@ package studytrackerapp.domain;
  * Class representing a course studied by the user
  */
 
+// TODO: add grade received property?
+
 public class Course {
 
   private String name;

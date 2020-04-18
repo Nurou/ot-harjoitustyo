@@ -1,6 +1,7 @@
 package studytrackerapp.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,7 +15,6 @@ public class CourseService {
 
   private CourseDao courseDao;
   private List<Course> courses;
-  private int courseCount;
 
   public CourseService(CourseDao courseDao) {
     // initialise DAO
@@ -61,7 +61,7 @@ public class CourseService {
 
       if (newCourse != null) {
         System.out.println("Course '" + name + "' added");
-        courseCount++;
+        // courseCount++;
         return true;
       }
 
@@ -79,10 +79,14 @@ public class CourseService {
    * @return
    */
   public List<Course> getCourses() {
-    if (courseCount == 0) {
-      return null;
-    }
+
     setCourses(this.courseDao.list().stream().collect(Collectors.toList()));
+
+    if (this.courses == null) {
+      // immutable empty list
+      return List.of();
+    }
+
     return this.courses;
   }
 
