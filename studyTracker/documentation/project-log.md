@@ -13,12 +13,9 @@
 |    05.04     | 3          | Testing                                                                                        |
 |    06.04     | 5          | Database configuration, further testing, added checkstyle                                      | ---------- |
 | 08.04 - 12.4 | 10         | Further functionality - UI & testing + domain refactoring                                      | ---------- |
-|              |            |
-|              |            |                                                                                                |
-|              |            |
-|              |            |                                                                                                |
-|              |            |                                                                                                |
-|              |            |                                                                                                |
+|    18.04     | 3          | UI functionality & refactoring                                                                 |
+|    19.04     |            |                                                                                                |
+|              |
 |              |            |                                                                                                |
 |              |            |                                                                                                |
 |    total     | 42.5       |

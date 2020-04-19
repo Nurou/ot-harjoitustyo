@@ -70,7 +70,7 @@ public class CourseServiceTest {
 
   @Test
   public void noCoursesIfNoneAdded() {
-    assertNull(courseService.getCourses());
+    assertTrue(courseService.getCourses().isEmpty());
   }
 
   @Test

@@ -79,13 +79,9 @@ public class CourseService {
    * @return
    */
   public List<Course> getCourses() {
+    var courses = this.courseDao.list().stream().collect(Collectors.toList());
 
-    setCourses(this.courseDao.list().stream().collect(Collectors.toList()));
-
-    if (this.courses == null) {
-      // immutable empty list
-      return List.of();
-    }
+    setCourses(courses);
 
     return this.courses;
   }

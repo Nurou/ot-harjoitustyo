@@ -93,8 +93,8 @@ public class CourseDao implements Dao<Course, String> {
 
       // checking if there are any results
       if (!resultSet.isBeforeFirst()) {
-        System.out.println("No data");
-        return null;
+        System.out.println("No course data");
+        return List.of();
       }
 
       while (resultSet.next()) {
@@ -103,7 +103,7 @@ public class CourseDao implements Dao<Course, String> {
       }
     } catch (Exception e) {
       System.err.println(e.getMessage());
-      return null;
+      return List.of();
     }
 
     return courses;
