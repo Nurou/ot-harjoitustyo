@@ -75,8 +75,8 @@ public class CourseDao implements Dao<Course, String> {
 
   /**
    * Returns a list of all the courses in the database for a given user
-   *
-   * @return List<Course>
+   * 
+   * @return List<Course>, an empty one if a user has yet to add courses
    */
 
   @Override

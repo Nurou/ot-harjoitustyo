@@ -61,7 +61,6 @@ public class CourseService {
 
       if (newCourse != null) {
         System.out.println("Course '" + name + "' added");
-        // courseCount++;
         return true;
       }
 
@@ -78,6 +77,7 @@ public class CourseService {
    * 
    * @return
    */
+
   public List<Course> getCourses() {
     var courses = this.courseDao.list().stream().collect(Collectors.toList());
 

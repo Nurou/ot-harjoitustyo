@@ -23,10 +23,16 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.beans.property.ReadOnlyProperty;
 import studytrackerapp.dao.CourseDao;
@@ -64,15 +70,17 @@ public class StudyTrackerUi extends Application {
   private final int CREATE_USER_WIDTH = 700;
   private final int CREATE_USER_HEIGHT = 500;
 
+  private final double CIRCLE_RADIUS = 100;
+
   /* Globals */
   private boolean deleteMode;
-  private boolean userLoggedIn;
 
   // Menu & User Stats
   private final Label userMessageLabel = new Label();
   private final Label userStatsLabel = new Label();
   private final Label loginMessageLabel = new Label();
-  private ProgressBar progressBar = new ProgressBar();
+  private final ProgressBar progressBar = new ProgressBar();
+  private final Text progressCircleText = new Text();
 
   // styles
   private final int BUTTON_PADDING = 10;
@@ -107,7 +115,6 @@ public class StudyTrackerUi extends Application {
 
     // Globals
     deleteMode = false;
-    userLoggedIn = false;
 
     // Database
     final var database = new Database();
@@ -445,10 +452,10 @@ public class StudyTrackerUi extends Application {
     courseBoard.setAlignment(Pos.BASELINE_CENTER);
 
     // other components
-
     final var progressBarMessage = new Label("Your progress so far:");
+    final var progressInNumericalForm = createNumericalProgressRep();
 
-    userStatsContainer.getChildren().addAll(userMessageLabel, progressBarMessage, progressBar);
+    userStatsContainer.getChildren().addAll(userMessageLabel, progressBarMessage, progressBar, progressInNumericalForm);
 
     // add menu components to to menu
     final HBox menuContainer = new HBox(15);
@@ -649,7 +656,7 @@ public class StudyTrackerUi extends Application {
    * @param targetCreditsInput
    */
   private TextField createIntTextField() {
-    var textFieldInput = new TextField();
+    final var textFieldInput = new TextField();
     final UnaryOperator<Change> filter = change -> {
       final var text = change.getText();
 
@@ -674,8 +681,9 @@ public class StudyTrackerUi extends Application {
     final var targetCredits = userService.getLoggedUser().getTarget();
     final var completedStatus = 2;
 
-    // check if user has any courses
+    // first need to check if user has any courses
     if (courseService.getCourses().isEmpty()) {
+      progressBar.setProgress(0);
       return;
     }
 
@@ -683,13 +691,11 @@ public class StudyTrackerUi extends Application {
         .filter(course -> course.getStatus() == completedStatus).map(completed -> completed.getCredits())
         .reduce(0, (totalCredits, courseCredits) -> totalCredits + courseCredits);
 
-    System.out.println("credits: " + currentCredits);
-
     final var currentProgressAsFraction = (double) currentCredits / targetCredits;
     System.out.println(currentProgressAsFraction);
 
-    // set progress bar progress
     progressBar.setProgress(currentProgressAsFraction);
+    progressCircleText.setText(currentCredits + " / " + targetCredits);
   }
 
   public void setLoginMessage() {
@@ -699,15 +705,21 @@ public class StudyTrackerUi extends Application {
     studentName = studentName.substring(0, 1).toUpperCase() + studentName.substring(1).toLowerCase();
 
     userMessageLabel.setText("Hey " + studentName + "! Here's your profile");
+    userMessageLabel.setFont(Font.font(null, FontWeight.BOLD, 18));
   }
 
   /**
    * Refreshes the board used to manage studies
    */
+
   public void redrawList() {
-    // clear list
+
+    // clear current state
     backlogCourses.getChildren().clear();
-    // add each course to the list
+    ongoingCourses.getChildren().clear();
+    completedCourses.getChildren().clear();
+
+    // add each course to the board based on status
     courseService.getCourses().forEach(course -> {
       switch (course.getStatus()) {
         case 1:
@@ -721,5 +733,30 @@ public class StudyTrackerUi extends Application {
           break;
       }
     });
+  }
+
+  private Circle createCircle() {
+    final var circle = new Circle(CIRCLE_RADIUS);
+
+    circle.setStroke(Color.FORESTGREEN);
+    circle.setStrokeWidth(5);
+    circle.setStrokeType(StrokeType.INSIDE);
+    circle.setFill(Color.AZURE);
+    circle.relocate(0, 0);
+
+    return circle;
+  }
+
+  private StackPane createNumericalProgressRep() {
+    final var progressCircle = createCircle();
+    progressCircleText.setBoundsType(TextBoundsType.VISUAL);
+    progressCircleText.setFont(Font.font(null, FontWeight.BOLD, 24));
+
+    var stack = new StackPane();
+    stack.getChildren().addAll(progressCircle, progressCircleText);
+    stack.setLayoutX(30);
+    stack.setLayoutY(30);
+
+    return stack;
   }
 }
