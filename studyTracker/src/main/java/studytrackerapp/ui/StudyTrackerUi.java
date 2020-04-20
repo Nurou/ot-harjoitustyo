@@ -35,6 +35,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.beans.property.ReadOnlyProperty;
+
 import studytrackerapp.dao.CourseDao;
 import studytrackerapp.dao.Database;
 import studytrackerapp.dao.UserDao;
@@ -65,12 +66,12 @@ public class StudyTrackerUi extends Application {
   private final int FIELD_GROUP_PADDING = 15;
 
   private final int SCENE_WIDTH = 1000;
-  private final int SCENE_HEIGHT = 600;
+  private final int SCENE_HEIGHT = 900;
 
   private final int CREATE_USER_WIDTH = 700;
   private final int CREATE_USER_HEIGHT = 500;
 
-  private final double CIRCLE_RADIUS = 100;
+  private final double CIRCLE_RADIUS = 80;
 
   /* Globals */
   private boolean deleteMode;
@@ -160,6 +161,10 @@ public class StudyTrackerUi extends Application {
     /**
      * SET UP INITIAL VIEW
      */
+
+    // JMetro jMetro = new JMetro(Style.LIGHT);
+    // jMetro.setScene(loginScene);
+
     mainStage.setTitle("Study Tracker");
     // TODO: change back to loginScene
     mainStage.setScene(loginScene);
@@ -407,8 +412,11 @@ public class StudyTrackerUi extends Application {
 
     // column areas
     final var backlogScroll = new ScrollPane();
+    backlogScroll.setMinHeight(300);
     final var ongoingScroll = new ScrollPane();
+    ongoingScroll.setMinHeight(300);
     final var completedScroll = new ScrollPane();
+    completedScroll.setMinHeight(300);
 
     // add nodes to columns
     backlogCourses = new VBox(0);
@@ -483,6 +491,7 @@ public class StudyTrackerUi extends Application {
     modifyCourseButton.setAlignment(Pos.BASELINE_RIGHT);
 
     boardButtonsContainer.getChildren().addAll(addCourseButton, modifyCourseButton);
+    boardButtonsContainer.setAlignment(Pos.BOTTOM_LEFT);
 
     // add everything to the outer container
     final var separator = new Separator(Orientation.HORIZONTAL);
