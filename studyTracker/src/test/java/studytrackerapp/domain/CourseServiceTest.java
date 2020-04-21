@@ -11,7 +11,6 @@ import org.junit.Before;
 
 import studytrackerapp.dao.CourseDao;
 import studytrackerapp.dao.Database;
-import studytrackerapp.dao.UserDao;
 
 public class CourseServiceTest {
 

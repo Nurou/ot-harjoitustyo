@@ -2,8 +2,8 @@
 
 ## Purpose
 
-This application helps students manage progress in a study program consisting of multiple courses. Since it comes with a built-in login system, the application can be used by multiple users, each having control of their own study progress.
-A student may login and see what courses they have either ongoing, completed, or in the backlog. They're also able to monitor their overall progress.
+This application helps a students manage their progress in a study program. Since it comes with a built-in login system, the application can be used by multiple users, each having control of their own study progress.
+A student may login and see what courses they have either ongoing, completed, or in the backlog, and are able to modify/remove these. They're also able to monitor their overall progress and grade-point average (GPA).
 
 ## Users
 
@@ -55,6 +55,5 @@ The application could be improved by expanding it to have the ability to:
 - set study targets for periods and academic years
 - keep removed courses in a trash bin
 - delete users
-- categorise courses by faculty (e.g. math, computer science)
 - categorise courses by priority (using colours, for instance)
 - share the progress by generating a pdf, web link, etc.

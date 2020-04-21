@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import org.junit.After;
 import org.junit.Before;
 
-import studytrackerapp.dao.CourseDao;
 import studytrackerapp.dao.Database;
 import studytrackerapp.dao.UserDao;
 

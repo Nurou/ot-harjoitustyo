@@ -811,20 +811,16 @@ public class StudyTrackerUi extends Application {
     column.setOnDragDropped(event -> {
       final Dragboard db = event.getDragboard();
       boolean success = false;
-      System.out.println("ondragdropped triggered");
-      System.out.println("dragboard has string: " + db.hasString());
-      System.out.println("dragboard string: " + db.getString());
-      System.out.println("label: " + label);
 
       if (db.hasString()) {
         switch (label) {
           case FIRST_COLUMN_LABEL:
             try {
               courseService.changeCourseStatus(db.getString(), 0);
-              System.out.println("course moved to backlog");
               redrawList();
               updateProgress();
             } catch (final SQLException e) {
+              // TODO: do something more helpful with these
               e.printStackTrace();
             }
             break;
@@ -849,17 +845,14 @@ public class StudyTrackerUi extends Application {
           default:
             break;
         }
-        System.out.println("getting there");
         success = true;
       } else {
-        System.out.println("no string");
       }
       event.setDropCompleted(success);
       event.consume();
     });
 
     column.setOnDragDone(event -> {
-      System.out.println("Add clean up code");
       if (event.getTransferMode() == TransferMode.MOVE) {
         System.out.println("Drag Done");
       }
