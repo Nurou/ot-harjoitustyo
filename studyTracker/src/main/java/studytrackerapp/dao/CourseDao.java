@@ -109,6 +109,12 @@ public class CourseDao implements Dao<Course, String> {
     return courses;
   }
 
+  /**
+   * reads a single course from the db
+   * 
+   * @param courseName - name of the course being fetched
+   * @return the course that was fetched from db
+   */
   @Override
   public Course read(String courseName) throws SQLException {
     // object to hold the course, no course found by default
@@ -141,16 +147,48 @@ public class CourseDao implements Dao<Course, String> {
     return found;
   }
 
+  /**
+   * updates a course with the properties in the object passed as an argument
+   * 
+   * @param course - the course to be updated in the db
+   * @return - the course if update successful, null otherwise
+   */
   @Override
-  public Course update(Course object) throws SQLException {
-    // TODO Auto-generated method stub
+  public Course update(Course course) throws SQLException {
+    String sql = "UPDATE Course SET status = ? WHERE username = ? AND name = ?";
+
+    try (Connection connection = database.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setInt(1, course.getStatus());
+      statement.setString(2, this.user.getUsername());
+      statement.setString(3, course.getName());
+      statement.executeUpdate();
+      return course;
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
     return null;
   }
 
   @Override
-  public void delete(String key) throws SQLException {
-    // TODO Auto-generated method stub
+  public boolean delete(String courseName) throws SQLException {
+    String sql = "DELETE FROM Course WHERE name = ? AND username = ?";
 
+    try (Connection connection = database.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)) {
+
+      // set value
+      statement.setString(1, courseName);
+      statement.setString(2, this.user.getUsername());
+      statement.executeUpdate();
+
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+      return false;
+    }
+
+    return true;
   }
 
 }

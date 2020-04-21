@@ -105,9 +105,9 @@ public class UserDao implements Dao<User, String> {
   }
 
   @Override
-  public void delete(String key) {
+  public boolean delete(String key) {
     // TODO Auto-generated method stub
-
+    return false;
   }
 
 }

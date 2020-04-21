@@ -1,5 +1,6 @@
 package studytrackerapp.ui;
 
+import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.function.UnaryOperator;
 
@@ -21,6 +22,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TextFormatter.Change;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -72,13 +76,16 @@ public class StudyTrackerUi extends Application {
 
   private final double CIRCLE_RADIUS = 80;
 
+  // other
+  private final String FIRST_COLUMN_LABEL = "Backlog";
+  private final String SECOND_COLUMN_LABEL = "Ongoing";
+  private final String THIRD_COLUMN_LABEL = "Done";
+
   /* Globals */
   private boolean deleteMode;
 
   // Menu & User Stats
   private final Label userMessageLabel = new Label();
-  private final Label userStatsLabel = new Label();
-  private final Label loginMessageLabel = new Label();
   private final ProgressBar progressBar = new ProgressBar();
   private final Text progressCircleText = new Text();
 
@@ -94,9 +101,9 @@ public class StudyTrackerUi extends Application {
   /**
    * Nodes
    */
-  private VBox backlogCourses;
-  private VBox ongoingCourses;
-  private VBox completedCourses;
+  private final VBox backlogCourses = new VBox();
+  private final VBox ongoingCourses = new VBox();
+  private final VBox completedCourses = new VBox();
 
   /**
    * Services
@@ -148,14 +155,6 @@ public class StudyTrackerUi extends Application {
     newCourseScene = createNewCourseScene(window);
 
     // ---------------------------------------
-
-    /******** TEST MODE *******/
-    // userService.login("nurou", "pass");
-    // final var loggedUser = userService.getLoggedUser();
-    // // assign user to courses
-    // courseService.assignUser(loggedUser);
-    // // initial course-list fetch
-    // redrawList();
 
     /**
      * SET UP INITIAL VIEW
@@ -237,18 +236,17 @@ public class StudyTrackerUi extends Application {
    */
   private Scene createNewUserScene(final Stage window) {
 
-    // containers
-    // main
+    // main container
     final var createUserContainer = new VBox(CONTAINER_SPACING);
+    createUserContainer.setPadding(new Insets(CONTAINER_PADDING));
+
     // container for fields
     final var createUserFieldGroup = new VBox(FIELD_GROUP_SPACING);
     createUserFieldGroup.setPadding(new Insets(FIELD_GROUP_PADDING));
+
     // container for buttons
     final var buttonContainer = new HBox(FIELD_GROUP_SPACING);
     buttonContainer.setPadding(new Insets(FIELD_GROUP_PADDING));
-
-    // container styling
-    createUserContainer.setPadding(new Insets(CONTAINER_PADDING));
 
     // fields
     final var nameLabel = new Label("Name");
@@ -294,26 +292,21 @@ public class StudyTrackerUi extends Application {
         createUserMessage.setText("Either the username, password, or name that was entered was too short.");
         createUserMessage.setTextFill(Color.RED);
         createUserMessage.setFont(Font.font(null, FontWeight.BOLD, 18));
-
-        // clear fields
-        newNameInput.clear();
-        newUsernameInput.clear();
-        newPasswordInput.clear();
-
-        return;
-      }
-
-      if (userService.createUser(username, name, password, programName, Integer.parseInt(targetCredits))) {
+      } else if (userService.createUser(username, name, password, programName, Integer.parseInt(targetCredits))) {
         System.out.println("All good!");
         createUserMessage.setText("Success!");
         createUserMessage.setTextFill(Color.GREEN);
         createUserMessage.setFont(Font.font(null, FontWeight.BOLD, 18));
+        // clear fields
+        newNameInput.clear();
+        newUsernameInput.clear();
+        newPasswordInput.clear();
+        programNameInput.clear();
+        targetCreditsInput.clear();
         window.setScene(loginScene);
-        return;
       } else {
         createUserMessage.setText("A user with the username: '" + username + "' already exists.");
         createUserMessage.setTextFill(Color.RED);
-        return;
       }
 
     });
@@ -326,7 +319,7 @@ public class StudyTrackerUi extends Application {
     createUserContainer.getChildren().addAll(createUserMessage, createUserFieldGroup, buttonContainer);
 
     // place container within view
-    return new Scene(createUserContainer, CREATE_USER_WIDTH, CREATE_USER_HEIGHT);
+    return new Scene(createUserContainer, 400, CREATE_USER_HEIGHT);
 
   }
 
@@ -350,10 +343,19 @@ public class StudyTrackerUi extends Application {
 
     logoutButton.setAlignment(Pos.TOP_LEFT);
 
-    final var deleteModeToggleButton = new Button("Delete Mode");
+    final var deleteModeToggleButton = new Button("Toggle Delete Mode");
+
     deleteModeToggleButton.setOnAction(e -> {
       deleteMode = !deleteMode;
       System.out.println(deleteMode);
+      if (deleteMode) {
+        deleteModeToggleButton.setStyle("-fx-base: #E74C3C;");
+        deleteModeToggleButton.setText("Delete Mode");
+      } else {
+        deleteModeToggleButton.setStyle("-fx-base: #080;");
+        deleteModeToggleButton.setText("Normal Mode");
+      }
+      redrawList();
     });
 
     deleteModeToggleButton.setAlignment(Pos.TOP_RIGHT);
@@ -363,57 +365,9 @@ public class StudyTrackerUi extends Application {
     courseBoard.setSpacing(20);
     courseBoard.setPadding(new Insets(30));
 
-    // column labels
-    final var backlog = new Label("Backlog");
-    final var ongoing = new Label("Ongoing");
-    final var completed = new Label("Completed");
-
-    // column areas
-    final var backlogScroll = new ScrollPane();
-    backlogScroll.setMinHeight(300);
-    final var ongoingScroll = new ScrollPane();
-    ongoingScroll.setMinHeight(300);
-    final var completedScroll = new ScrollPane();
-    completedScroll.setMinHeight(300);
-
-    // add nodes to columns
-    backlogCourses = new VBox(0);
-    backlogCourses.setMaxWidth(310);
-    backlogCourses.setMinWidth(310);
-
-    ongoingCourses = new VBox(0);
-    ongoingCourses.setMaxWidth(310);
-    ongoingCourses.setMinWidth(310);
-
-    completedCourses = new VBox(0);
-    completedCourses.setMaxWidth(310);
-    completedCourses.setMinWidth(310);
-
-    backlogScroll.setContent(backlogCourses);
-    ongoingScroll.setContent(ongoingCourses);
-    completedScroll.setContent(completedCourses);
-
-    // put labels and areas together to form column
-    final var backlogColumn = new VBox(15);
-    final var ongoingColumn = new VBox(15);
-    final var completedColumn = new VBox(15);
-
-    backlogColumn.setMinWidth(250);
-    backlogColumn.getChildren().add(backlog);
-    backlogColumn.getChildren().add(backlogScroll);
-
-    ongoingColumn.setMinWidth(250);
-    ongoingColumn.getChildren().add(ongoing);
-    ongoingColumn.getChildren().add(ongoingScroll);
-
-    completedColumn.setMinWidth(250);
-    completedColumn.getChildren().add(completed);
-    completedColumn.getChildren().add(completedScroll);
-
-    // add the columns to the board
-    courseBoard.getChildren().add(backlogColumn);
-    courseBoard.getChildren().add(ongoingColumn);
-    courseBoard.getChildren().add(completedColumn);
+    courseBoard.getChildren().add(createNewColumn(FIRST_COLUMN_LABEL, backlogCourses));
+    courseBoard.getChildren().add(createNewColumn(SECOND_COLUMN_LABEL, ongoingCourses));
+    courseBoard.getChildren().add(createNewColumn(THIRD_COLUMN_LABEL, completedCourses));
 
     courseBoard.setAlignment(Pos.BASELINE_CENTER);
 
@@ -589,25 +543,64 @@ public class StudyTrackerUi extends Application {
     wrapperContainer.setCenter(statusContainer);
     wrapperContainer.setBottom(buttonContainer);
 
-    return new Scene(wrapperContainer, SCENE_WIDTH, SCENE_HEIGHT);
+    return new Scene(wrapperContainer, 400, SCENE_HEIGHT);
 
   }
 
-  private Node createCourseNode(final Course course) {
-    final var courseContainer = new HBox(10);
-    courseContainer.setPadding(new Insets(5, 5, 5, 5));
+  private HBox currentCourse = new HBox();
 
-    final var label = new Label(course.getName());
-    label.setMinHeight(28);
+  private Node createCourseNode(final Course course) {
+    final var courseNode = new HBox(10);
+    courseNode.setPadding(new Insets(5, 5, 5, 5));
+    courseNode.setStyle("-fx-stroke: grey; -fx-stroke-width: 5;");
+
+    final var courseName = course.getName();
+
+    final var courseNameLabel = new Label(courseName);
+    courseNameLabel.setMinHeight(28);
+    courseNameLabel.setStyle("-fx-text-fill: ladder(background, white 49%, black 50%);");
+
+    switch (course.getStatus()) {
+      case 0:
+        courseNode.setStyle("-fx-background-color:#ffd5c0;");
+        break;
+      case 1:
+        courseNode.setStyle("-fx-background-color: #AED6F1;");
+        break;
+      case 2:
+        courseNode.setStyle("-fx-background-color: #ABEBC6;");
+        break;
+    }
 
     final Button deleteButton = new Button("Delete");
+    deleteButton.setOnAction(e -> {
+      courseService.deleteCourse(courseName);
+      redrawList();
+      updateProgress();
+    });
+
     deleteButton.setStyle("-fx-base: #E74C3C;");
+
     // button only visible in delete mode
     deleteButton.setVisible(deleteMode);
 
-    courseContainer.getChildren().addAll(label, deleteButton);
+    courseNode.getChildren().addAll(courseNameLabel, deleteButton);
 
-    return courseContainer;
+    // drag & drop functionality
+    courseNode.setOnDragDetected(e -> {
+
+      System.out.println("onDragDetected");
+
+      currentCourse = (HBox) e.getSource();
+      final Dragboard db = courseNode.startDragAndDrop(TransferMode.ANY);
+      final ClipboardContent content = new ClipboardContent();
+      content.putString(courseNameLabel.getText());
+      db.setContent(content);
+      e.consume();
+
+    });
+
+    return courseNode;
   }
 
   /**
@@ -651,6 +644,7 @@ public class StudyTrackerUi extends Application {
     // first need to check if user has any courses
     if (courseService.getCourses().isEmpty()) {
       progressBar.setProgress(0);
+      progressCircleText.setText(0 + " / " + targetCredits);
       return;
     }
 
@@ -719,7 +713,7 @@ public class StudyTrackerUi extends Application {
     progressCircleText.setBoundsType(TextBoundsType.VISUAL);
     progressCircleText.setFont(Font.font(null, FontWeight.BOLD, 24));
 
-    var stack = new StackPane();
+    final var stack = new StackPane();
     stack.getChildren().addAll(progressCircle, progressCircleText);
     stack.setLayoutX(30);
     stack.setLayoutY(30);
@@ -727,8 +721,8 @@ public class StudyTrackerUi extends Application {
     return stack;
   }
 
-  private Button createLoginButton(String buttonText, TextField usernameInput, TextField passwordInput, Stage window,
-      Label loginStatusMessage) {
+  private Button createLoginButton(final String buttonText, final TextField usernameInput,
+      final TextField passwordInput, final Stage window, final Label loginStatusMessage) {
     final var loginButton = new Button(buttonText);
 
     // on the user clicking to login
@@ -769,8 +763,8 @@ public class StudyTrackerUi extends Application {
 
   }
 
-  private Button createNewUserDirectButton(String buttonText, TextField usernameInput, TextField passwordInput,
-      Stage window, Label loginStatusMessage) {
+  private Button createNewUserDirectButton(final String buttonText, final TextField usernameInput,
+      final TextField passwordInput, final Stage window, final Label loginStatusMessage) {
     final var createUserSceneButton = new Button(buttonText);
 
     // on the user clicking to login
@@ -784,5 +778,93 @@ public class StudyTrackerUi extends Application {
 
     return createUserSceneButton;
 
+  }
+
+  private VBox createNewColumn(final String label, final VBox courseList) {
+
+    final var columnLabel = new Label(label);
+
+    final var scroll = new ScrollPane();
+    scroll.setMinHeight(300);
+
+    courseList.setMaxWidth(310);
+    courseList.setMinWidth(310);
+
+    scroll.setContent(courseList);
+
+    final var column = new VBox(15);
+    column.setMinWidth(250);
+    column.getChildren().add(columnLabel);
+    column.getChildren().add(scroll);
+
+    return addDragAndDropFunctionality(column, label);
+  }
+
+  private VBox addDragAndDropFunctionality(final VBox column, final String label) {
+    column.setOnDragOver(event -> {
+      if (event.getGestureSource() == currentCourse && event.getDragboard().hasString()) {
+        event.acceptTransferModes(TransferMode.MOVE);
+      }
+      event.consume();
+    });
+
+    column.setOnDragDropped(event -> {
+      final Dragboard db = event.getDragboard();
+      boolean success = false;
+      System.out.println("ondragdropped triggered");
+      System.out.println("dragboard has string: " + db.hasString());
+      System.out.println("dragboard string: " + db.getString());
+      System.out.println("label: " + label);
+
+      if (db.hasString()) {
+        switch (label) {
+          case FIRST_COLUMN_LABEL:
+            try {
+              courseService.changeCourseStatus(db.getString(), 0);
+              System.out.println("course moved to backlog");
+              redrawList();
+              updateProgress();
+            } catch (final SQLException e) {
+              e.printStackTrace();
+            }
+            break;
+          case SECOND_COLUMN_LABEL:
+            try {
+              courseService.changeCourseStatus(db.getString(), 1);
+              redrawList();
+              updateProgress();
+            } catch (final SQLException e) {
+              e.printStackTrace();
+            }
+            break;
+          case THIRD_COLUMN_LABEL:
+            try {
+              courseService.changeCourseStatus(db.getString(), 2);
+              redrawList();
+              updateProgress();
+            } catch (final SQLException e) {
+              e.printStackTrace();
+            }
+            break;
+          default:
+            break;
+        }
+        System.out.println("getting there");
+        success = true;
+      } else {
+        System.out.println("no string");
+      }
+      event.setDropCompleted(success);
+      event.consume();
+    });
+
+    column.setOnDragDone(event -> {
+      System.out.println("Add clean up code");
+      if (event.getTransferMode() == TransferMode.MOVE) {
+        System.out.println("Drag Done");
+      }
+      event.consume();
+    });
+    return column;
   }
 }

@@ -1,4 +1,4 @@
-package studytrackerapp;
+package studytrackerapp.main;
 
 import studytrackerapp.ui.StudyTrackerUi;
 

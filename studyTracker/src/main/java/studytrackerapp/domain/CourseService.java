@@ -1,5 +1,6 @@
 package studytrackerapp.domain;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,10 +14,10 @@ import studytrackerapp.dao.CourseDao;
  */
 public class CourseService {
 
-  private CourseDao courseDao;
+  private final CourseDao courseDao;
   private List<Course> courses;
 
-  public CourseService(CourseDao courseDao) {
+  public CourseService(final CourseDao courseDao) {
     // initialise DAO
     this.courseDao = courseDao;
     this.courses = new ArrayList<>();
@@ -28,7 +29,7 @@ public class CourseService {
    * @param user
    */
 
-  public void assignUser(User user) {
+  public void assignUser(final User user) {
     courseDao.setUser(user);
   }
 
@@ -47,9 +48,10 @@ public class CourseService {
    * @return true if course was created, false otherwise
    */
 
-  public boolean createCourse(String name, int credits, int isCompulsory, int status, String courseLink) {
+  public boolean createCourse(final String name, final int credits, final int isCompulsory, final int status,
+      final String courseLink) {
 
-    for (Course course : courses) {
+    for (final Course course : courses) {
       if (course.getName().equals(name)) {
         System.out.println("The course '" + name + "' has already been added.");
         return false;
@@ -57,15 +59,15 @@ public class CourseService {
     }
 
     try {
-      Course newCourse = courseDao.create(new Course(name, credits, isCompulsory, status, courseLink));
+      final Course newCourse = courseDao.create(new Course(name, credits, isCompulsory, status, courseLink));
 
       if (newCourse != null) {
         System.out.println("Course '" + name + "' added");
         return true;
       }
 
-    } catch (Exception e) {
-      System.err.println("Error in adding course - " + e.getMessage());
+    } catch (final Exception e) {
+      System.err.println("Error in adding course: " + e.getMessage());
       return false;
     }
 
@@ -79,14 +81,46 @@ public class CourseService {
    */
 
   public List<Course> getCourses() {
-    var courses = this.courseDao.list().stream().collect(Collectors.toList());
+    final List<Course> courses = this.courseDao.list().stream().collect(Collectors.toList());
 
     setCourses(courses);
 
     return this.courses;
   }
 
-  public void setCourses(List<Course> courses) {
+  /**
+   * 
+   * @param the name of the course to be deleted
+   * @return true if successful, false if student studies no such course
+   */
+
+  public boolean deleteCourse(final String course) {
+
+    final var currentCourses = getCourses().stream().map(c -> c.getName()).collect(Collectors.toList());
+
+    if (!currentCourses.contains(course)) {
+      return false;
+    }
+
+    try {
+      courseDao.delete(course);
+    } catch (final SQLException e) {
+      e.printStackTrace();
+    }
+
+    return true;
+
+  }
+
+  public Course changeCourseStatus(final String courseName, final int status) throws SQLException {
+    // find course
+
+    var course = courseDao.read(courseName);
+    course.setStatus(status);
+    return courseDao.update(course);
+  }
+
+  public void setCourses(final List<Course> courses) {
     this.courses = courses;
   }
 }

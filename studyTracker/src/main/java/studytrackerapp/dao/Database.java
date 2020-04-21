@@ -70,6 +70,7 @@ public class Database {
    * @throws SQLException
    */
   public boolean createTables(Connection connection) throws SQLException {
+
     String userTableSql = "CREATE TABLE IF NOT EXISTS User (username TEXT PRIMARY KEY, name TEXT, password TEXT, program_name TEXT, target_credits INTEGER)";
 
     try (Statement statement = connection.createStatement()) {
