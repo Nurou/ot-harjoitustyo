@@ -1,6 +1,8 @@
 
 package studytrackerapp.domain;
 
+import java.util.Objects;
+
 /**
  * Class representing a course studied by the user
  */
@@ -92,6 +94,24 @@ public class Course {
 
   public void setUser(User user) {
     this.user = user;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this)
+      return true;
+    if (!(o instanceof Course)) {
+      return false;
+    }
+    Course course = (Course) o;
+    return Objects.equals(name, course.name) && credits == course.credits && isCompulsory == course.isCompulsory
+        && status == course.status && Objects.equals(courseLink, course.courseLink)
+        && Objects.equals(user, course.user);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, credits, isCompulsory, status, courseLink, user);
   }
 
   @Override

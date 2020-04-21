@@ -27,7 +27,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -60,7 +59,7 @@ public class StudyTrackerUi extends Application {
   private final int MIN_USERNAME_LENGTH = 2;
 
   // dimensions
-  private final int CONTAINER_SPACING = 10;
+  private final int CONTAINER_SPACING = 20;
   private final int CONTAINER_PADDING = 30;
   private final int FIELD_GROUP_SPACING = 10;
   private final int FIELD_GROUP_PADDING = 15;
@@ -132,7 +131,7 @@ public class StudyTrackerUi extends Application {
   }
 
   @Override
-  public void start(final Stage mainStage) {
+  public void start(final Stage window) {
 
     System.out.println("Application launched...");
 
@@ -140,13 +139,13 @@ public class StudyTrackerUi extends Application {
      * CREATE SCENES
      */
 
-    loginScene = createLoginScene(mainStage);
+    loginScene = createLoginScene(window);
 
-    newUserScene = createNewUserScene(mainStage);
+    newUserScene = createNewUserScene(window);
 
-    studyTrackingScene = createStudyTrackingScene(mainStage);
+    studyTrackingScene = createStudyTrackingScene(window);
 
-    newCourseScene = createNewCourseScene(mainStage);
+    newCourseScene = createNewCourseScene(window);
 
     // ---------------------------------------
 
@@ -162,15 +161,12 @@ public class StudyTrackerUi extends Application {
      * SET UP INITIAL VIEW
      */
 
-    // JMetro jMetro = new JMetro(Style.LIGHT);
-    // jMetro.setScene(loginScene);
-
-    mainStage.setTitle("Study Tracker");
-    // TODO: change back to loginScene
-    mainStage.setScene(loginScene);
-    mainStage.show();
+    window.setTitle("Study Tracker");
+    loginScene.getStylesheets().add(getClass().getResource("css/login.css").toExternalForm());
+    window.setScene(loginScene);
+    window.show();
     // prevents closing of app prior to logout
-    // mainStage.setOnCloseRequest(e -> {
+    // window.setOnCloseRequest(e -> {
     // System.out.println(userService.getLoggedUser());
     // if (userService.getLoggedUser() != null) {
     // e.consume();
@@ -193,91 +189,53 @@ public class StudyTrackerUi extends Application {
    * 
    */
 
-  private Scene createLoginScene(final Stage mainStage) {
-    // containers
-
-    // the outer 'wrapper' box
-    final var loginContainer = new VBox(CONTAINER_SPACING);
-    // container for input fields
-    final var loginFieldGroup = new VBox(FIELD_GROUP_SPACING);
-
-    // container styling
-    loginContainer.setPadding(new Insets(CONTAINER_PADDING));
+  private Scene createLoginScene(final Stage window) {
 
     // login input fields
     final var usernameLabel = new Label("Username");
+    usernameLabel.setPrefWidth(100);
+    usernameLabel.setMaxWidth(100);
     final var usernameInput = new TextField();
 
     final var passwordLabel = new Label("Password");
+    passwordLabel.setPrefWidth(100);
+    passwordLabel.setMaxWidth(100);
     final var passwordInput = new PasswordField();
+
+    // container for input fields
+    final var loginFieldGroup = new VBox(FIELD_GROUP_SPACING);
 
     // add all field elements to field group
     loginFieldGroup.getChildren().addAll(usernameLabel, usernameInput, passwordLabel, passwordInput);
 
     // rest of login container elements
     final var loginMessage = new Label("Welcome to Study Tracker!");
+
     final var loginStatusMessage = new Label();
-    final var loginButton = new Button("Login");
-    final var createUserDirection = new Label("New User? Click Here To Sign Up");
-    final var createButton = new Button("Create User");
+    final var loginButton = createLoginButton("Login", usernameInput, passwordInput, window, loginStatusMessage);
 
-    // on the user clicking to login
-    loginButton.setOnAction(e -> {
-      // get user info
-      final var username = usernameInput.getText();
-      final var password = passwordInput.getText();
+    final var createUserSceneLabel = new Label("New User? Click Here To Sign Up");
+    final var createUserSceneButton = createNewUserDirectButton("Create User", usernameInput, passwordInput, window,
+        loginStatusMessage);
 
-      // attempt login...
-      if (userService.login(username, password)) {
-        // all good! Get user details
-        final var loggedUser = userService.getLoggedUser();
-        // assign user to courses
-        courseService.assignUser(loggedUser);
-        // welcome user
-        setLoginMessage();
-        // fetch stats
-        updateProgress();
-        // fetch their courses
-        redrawList();
-
-        mainStage.setScene(studyTrackingScene);
-      } else {
-        // login unsuccessful
-        loginStatusMessage
-            .setText("Invalid credentials, or the user: '  " + username + "' has not been created. Try again.");
-
-        // display message
-        loginStatusMessage.setTextFill(Color.RED);
-        loginStatusMessage.setFont(Font.font(null, FontWeight.BOLD, 18));
-      }
-      // reset fields
-      usernameInput.clear();
-      passwordInput.clear();
-    });
-
-    // user wants to create a new account
-    createButton.setOnAction(e -> {
-      usernameInput.clear();
-      passwordInput.clear();
-      loginStatusMessage.setText("");
-      mainStage.setScene(newUserScene);
-    });
+    // the outer 'wrapper' box
+    final var loginContainer = new VBox(CONTAINER_SPACING);
+    loginContainer.setPadding(new Insets(CONTAINER_PADDING));
+    loginContainer.setStyle("-fx-alignment: center");
 
     // add all components to the outer container
     loginContainer.getChildren().addAll(loginMessage, loginStatusMessage, loginFieldGroup, loginButton,
-        createUserDirection, createButton);
-
-    // loginContainer.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
+        createUserSceneLabel, createUserSceneButton);
 
     // place container within view
-    return new Scene(loginContainer, SCENE_WIDTH, SCENE_HEIGHT);
+    return new Scene(loginContainer, 350, 500);
   }
 
   /**
-   * @param mainStage
+   * @param window
    * @return Scene
    */
-  private Scene createNewUserScene(final Stage mainStage) {
+  private Scene createNewUserScene(final Stage window) {
 
     // containers
     // main
@@ -350,7 +308,7 @@ public class StudyTrackerUi extends Application {
         createUserMessage.setText("Success!");
         createUserMessage.setTextFill(Color.GREEN);
         createUserMessage.setFont(Font.font(null, FontWeight.BOLD, 18));
-        mainStage.setScene(loginScene);
+        window.setScene(loginScene);
         return;
       } else {
         createUserMessage.setText("A user with the username: '" + username + "' already exists.");
@@ -361,7 +319,7 @@ public class StudyTrackerUi extends Application {
     });
 
     returnButton.setOnAction(e -> {
-      mainStage.setScene(loginScene);
+      window.setScene(loginScene);
     });
 
     // add nested containers to main container
@@ -372,7 +330,7 @@ public class StudyTrackerUi extends Application {
 
   }
 
-  private Scene createStudyTrackingScene(final Stage mainStage) {
+  private Scene createStudyTrackingScene(final Stage window) {
 
     // containers
     final var studyTrackerBoardContainer = new VBox();
@@ -387,7 +345,7 @@ public class StudyTrackerUi extends Application {
     final var logoutButton = new Button("Logout");
     logoutButton.setOnAction(e -> {
       userService.logout();
-      mainStage.setScene(loginScene);
+      window.setScene(loginScene);
     });
 
     logoutButton.setAlignment(Pos.TOP_LEFT);
@@ -478,7 +436,7 @@ public class StudyTrackerUi extends Application {
 
     final var addCourseButton = new Button("Add Course");
     addCourseButton.setOnAction(e -> {
-      mainStage.setScene(newCourseScene);
+      window.setScene(newCourseScene);
     });
 
     addCourseButton.setAlignment(Pos.BASELINE_RIGHT);
@@ -503,7 +461,7 @@ public class StudyTrackerUi extends Application {
     return new Scene(verticalContainer, SCENE_WIDTH, SCENE_HEIGHT);
   }
 
-  private Scene createNewCourseScene(final Stage mainStage) {
+  private Scene createNewCourseScene(final Stage window) {
     // container for field group
     final var newCourseFieldGroup = new VBox();
     newCourseFieldGroup.setSpacing(10);
@@ -604,7 +562,7 @@ public class StudyTrackerUi extends Application {
         updateProgress();
 
         // change view back to course manager
-        mainStage.setScene(studyTrackingScene);
+        window.setScene(studyTrackingScene);
 
         // clear inputs
         courseNameInput.clear();
@@ -618,7 +576,7 @@ public class StudyTrackerUi extends Application {
     final var returnButton = new Button("Return");
 
     returnButton.setOnAction(e -> {
-      mainStage.setScene(studyTrackingScene);
+      window.setScene(studyTrackingScene);
     });
 
     buttonContainer.getChildren().addAll(addCourseButton, returnButton);
@@ -767,5 +725,64 @@ public class StudyTrackerUi extends Application {
     stack.setLayoutY(30);
 
     return stack;
+  }
+
+  private Button createLoginButton(String buttonText, TextField usernameInput, TextField passwordInput, Stage window,
+      Label loginStatusMessage) {
+    final var loginButton = new Button(buttonText);
+
+    // on the user clicking to login
+    loginButton.setOnAction(e -> {
+      // get user info
+      final var username = usernameInput.getText();
+      final var password = passwordInput.getText();
+
+      // attempt login...
+      if (userService.login(username, password)) {
+        // all good! Get user details
+        final var loggedUser = userService.getLoggedUser();
+        // assign user to courses
+        courseService.assignUser(loggedUser);
+        // welcome user
+        setLoginMessage();
+        // fetch stats
+        updateProgress();
+        // fetch their courses
+        redrawList();
+
+        window.setScene(studyTrackingScene);
+      } else {
+        // login unsuccessful
+        loginStatusMessage
+            .setText("Invalid credentials, or the user: '  " + username + "' has not been created. Try again.");
+
+        // display message
+        loginStatusMessage.setTextFill(Color.RED);
+        loginStatusMessage.setFont(Font.font(null, FontWeight.BOLD, 14));
+      }
+      // reset fields
+      usernameInput.clear();
+      passwordInput.clear();
+    });
+
+    return loginButton;
+
+  }
+
+  private Button createNewUserDirectButton(String buttonText, TextField usernameInput, TextField passwordInput,
+      Stage window, Label loginStatusMessage) {
+    final var createUserSceneButton = new Button(buttonText);
+
+    // on the user clicking to login
+    // user wants to create a new account
+    createUserSceneButton.setOnAction(e -> {
+      usernameInput.clear();
+      passwordInput.clear();
+      loginStatusMessage.setText("");
+      window.setScene(newUserScene);
+    });
+
+    return createUserSceneButton;
+
   }
 }
