@@ -19,9 +19,8 @@ public class UserDao implements Dao<User, String> {
    * Constructs DAO for User objects and initializes User table in db
    *
    * @param database (database to be accessed)
-   * @throws SQLException
    */
-  public UserDao(Database database) throws SQLException {
+  public UserDao(Database database) {
     this.database = database;
   }
 
@@ -55,7 +54,7 @@ public class UserDao implements Dao<User, String> {
   }
 
   /**
-   * Fetch a single user from the database & create a User object using the data
+   * Fetch a single user from the database and create a User object using the data
    *
    * @param username - this is the primary key in the db
    * @return User object if found in database, null otherwise

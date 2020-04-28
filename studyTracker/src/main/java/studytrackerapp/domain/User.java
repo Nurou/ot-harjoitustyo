@@ -18,11 +18,11 @@ public class User {
 
   /**
    * 
-   * @param name
-   * @param username
-   * @param password
-   * @param studyProgram - name of the program the student is studying
-   * @param target
+   * @param name         - full name of the user
+   * @param username     - the user's username
+   * @param password     - the user's password
+   * @param studyProgram - name of the program the user is studying
+   * @param target       - target number of credits for the user
    */
 
   public User(String name, String username, String password, String studyProgram, int target) {

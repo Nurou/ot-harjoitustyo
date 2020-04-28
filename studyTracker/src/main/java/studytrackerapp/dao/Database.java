@@ -67,7 +67,9 @@ public class Database {
    * Adds the required tables to the db
    * 
    * @param connection - the context in which the queries are executed
-   * @throws SQLException
+   * @throws SQLException - throws an error if there was an issue creating the
+   *                      tables
+   * @return true if successful, false otherwise
    */
   public boolean createTables(Connection connection) throws SQLException {
 

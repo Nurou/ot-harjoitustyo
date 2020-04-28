@@ -24,9 +24,8 @@ public class CourseService {
   }
 
   /**
-   * Assigns a user to the given course through the courseDao
    * 
-   * @param user
+   * @param user - the user to be assigned as the owner of the courses
    */
 
   public void assignUser(final User user) {
@@ -42,12 +41,14 @@ public class CourseService {
   }
 
   /**
-   * Interacts with courseDao to add a course to the db User not included since
-   * its stored in CourseDao
    * 
+   * @param name         - name of the course
+   * @param credits      - the number of credits the course is worth
+   * @param isCompulsory - whether the course is compulsory or not
+   * @param status       - completion status
+   * @param courseLink   - a link to the course
    * @return true if course was created, false otherwise
    */
-
   public boolean createCourse(final String name, final int credits, final int isCompulsory, final int status,
       final String courseLink) {
 
@@ -77,7 +78,7 @@ public class CourseService {
   /**
    * fetches all courses for a user through the Dao
    * 
-   * @return
+   * @return list of courses
    */
 
   public List<Course> getCourses() {
@@ -90,7 +91,7 @@ public class CourseService {
 
   /**
    * 
-   * @param the name of the course to be deleted
+   * @param course - name of the course to be deleted
    * @return true if successful, false if student studies no such course
    */
 
