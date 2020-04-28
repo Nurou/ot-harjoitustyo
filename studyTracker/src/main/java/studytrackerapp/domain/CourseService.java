@@ -47,6 +47,7 @@ public class CourseService {
    * @param isCompulsory - whether the course is compulsory or not
    * @param status       - completion status
    * @param courseLink   - a link to the course
+   * 
    * @return true if course was created, false otherwise
    */
   public boolean createCourse(final String name, final int credits, final int isCompulsory, final int status,
