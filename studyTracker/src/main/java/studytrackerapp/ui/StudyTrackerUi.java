@@ -161,7 +161,6 @@ public class StudyTrackerUi extends Application {
      */
 
     window.setTitle("Study Tracker");
-    // loginScene.getStylesheets().add(getClass().getResource("css/login.css").toExternalForm());
     window.setScene(loginScene);
     window.show();
     // prevents closing of app prior to logout
