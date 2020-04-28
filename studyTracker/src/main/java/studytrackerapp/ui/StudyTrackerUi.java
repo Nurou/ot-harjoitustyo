@@ -558,7 +558,8 @@ public class StudyTrackerUi extends Application {
 
     final var courseNameLabel = new Label(courseName);
     courseNameLabel.setMinHeight(28);
-    courseNameLabel.setStyle("-fx-text-fill: ladder(background, white 49%, black 50%);");
+    // courseNameLabel.setStyle("-fx-text-fill: ladder(background, white 49%, black
+    // 50%);");
 
     switch (course.getStatus()) {
       case 0:
