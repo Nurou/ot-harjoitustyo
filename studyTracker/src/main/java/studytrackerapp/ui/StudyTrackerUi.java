@@ -17,6 +17,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
@@ -36,7 +37,6 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.beans.property.ReadOnlyProperty;
@@ -88,7 +88,7 @@ public class StudyTrackerUi extends Application {
 
   // Menu & User Stats
   private final Label userMessageLabel = new Label();
-  private final ProgressBar progressBar = new ProgressBar();
+  private final ProgressIndicator progressIndicator = new ProgressIndicator();
   private final Text progressCircleText = new Text();
 
   // styles
@@ -342,15 +342,16 @@ public class StudyTrackerUi extends Application {
     menuContainer.getChildren().addAll(logoutButton, deleteModeToggleButton);
 
     // user stats section
-    final var userStatsContainer = new VBox();
+    final var userStatsContainer = new HBox();
     userStatsContainer.setPadding(new Insets(10));
     userStatsContainer.setSpacing(20);
     userStatsContainer.setAlignment(Pos.TOP_CENTER);
 
-    final var progressBarMessage = new Label("Your progress so far:");
     final var progressInNumericalForm = createNumericalProgressRep();
+    progressIndicator.setStyle(" -fx-progress-color: green;");
+    progressIndicator.setMinSize(160, 160);
 
-    userStatsContainer.getChildren().addAll(userMessageLabel, progressBarMessage, progressBar, progressInNumericalForm);
+    userStatsContainer.getChildren().addAll(progressIndicator, progressInNumericalForm);
 
     // board section
     final var courseBoard = new HBox();
@@ -381,7 +382,7 @@ public class StudyTrackerUi extends Application {
 
     final var separator = new Separator(Orientation.HORIZONTAL);
 
-    final var dragAndDropInstruction = new Text("You can move a course by dragging and dropping");
+    final var dragAndDropInstruction = new Text("Use drag & drop to move courses");
     dragAndDropInstruction.setFont(Font.font(null, FontWeight.BOLD, 18));
 
     final var studyTrackerBoardContainer = new VBox();
@@ -392,7 +393,9 @@ public class StudyTrackerUi extends Application {
 
     // add everything to the outer container
     final var verticalContainer = new VBox(10);
-    verticalContainer.getChildren().addAll(menuContainer, userStatsContainer, studyTrackerBoardContainer);
+    verticalContainer.getChildren().addAll(menuContainer, userMessageLabel, userStatsContainer,
+        studyTrackerBoardContainer);
+    verticalContainer.setAlignment(Pos.CENTER);
     return new Scene(verticalContainer, SCENE_WIDTH, SCENE_HEIGHT);
   }
 
@@ -565,7 +568,8 @@ public class StudyTrackerUi extends Application {
     final var courseName = course.getName();
 
     final var courseNameLabel = new Label(courseName);
-    courseNameLabel.setMinHeight(28);
+    courseNameLabel.setMinHeight(30);
+    courseNameLabel.setStyle("-fx-text-alignment: center; -fx-font-weight: bold;");
 
     switch (course.getStatus()) {
       case 0:
@@ -650,7 +654,7 @@ public class StudyTrackerUi extends Application {
 
     // first need to check if user has any courses
     if (courseService.getCourses().isEmpty()) {
-      progressBar.setProgress(0);
+      progressIndicator.setProgress(0);
       progressCircleText.setText(0 + " / " + targetCredits);
       return;
     }
@@ -662,7 +666,7 @@ public class StudyTrackerUi extends Application {
     final var currentProgressAsFraction = (double) currentCredits / targetCredits;
     System.out.println(currentProgressAsFraction);
 
-    progressBar.setProgress(currentProgressAsFraction);
+    progressIndicator.setProgress(currentProgressAsFraction);
     progressCircleText.setText(currentCredits + " / " + targetCredits);
   }
 
@@ -672,7 +676,7 @@ public class StudyTrackerUi extends Application {
     // capitalize first letter of name
     studentName = studentName.substring(0, 1).toUpperCase() + studentName.substring(1).toLowerCase();
 
-    userMessageLabel.setText("Hey " + studentName + "! Here's your profile");
+    userMessageLabel.setText("Hey " + studentName + "! Here's your profile and progress");
     userMessageLabel.setFont(Font.font(null, FontWeight.BOLD, 18));
   }
 

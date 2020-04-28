@@ -99,7 +99,6 @@ public class CourseServiceTest {
   }
 
   // TODO: tests for weighted average
-
   // @Test
   // public void canCalculateWeightedAverageForUserWithCompletedCourses() {
   // User user = new User("username", "test-user", "password", "tkt", 180);
