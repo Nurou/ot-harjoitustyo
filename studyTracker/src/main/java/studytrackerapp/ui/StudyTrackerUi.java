@@ -13,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
@@ -35,6 +36,7 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.beans.property.ReadOnlyProperty;
@@ -323,17 +325,10 @@ public class StudyTrackerUi extends Application {
   }
 
   private Scene createStudyTrackingScene(final Stage window) {
+    // top menu section
+    final HBox menuContainer = new HBox(15);
+    menuContainer.setPadding(new Insets(10, 10, 10, 10));
 
-    // containers
-    final var studyTrackerBoardContainer = new VBox();
-    studyTrackerBoardContainer.setPadding(new Insets(10));
-
-    final var userStatsContainer = new VBox();
-    userStatsContainer.setPadding(new Insets(10));
-    userStatsContainer.setSpacing(20);
-    userStatsContainer.setAlignment(Pos.TOP_CENTER);
-
-    // buttons for menu
     final var logoutButton = new Button("Logout");
     logoutButton.setOnAction(e -> {
       userService.logout();
@@ -342,25 +337,23 @@ public class StudyTrackerUi extends Application {
 
     logoutButton.setAlignment(Pos.TOP_LEFT);
 
-    final var deleteModeToggleButton = new Button("Toggle Delete Mode");
+    final var deleteModeToggleButton = createDeleteModeButton("Toggle Delete Mode");
 
-    deleteModeToggleButton.setOnAction(e -> {
-      deleteMode = !deleteMode;
-      System.out.println(deleteMode);
-      if (deleteMode) {
-        deleteModeToggleButton.setStyle("-fx-base: #E74C3C;");
-        deleteModeToggleButton.setText("Delete Mode");
-      } else {
-        deleteModeToggleButton.setStyle("-fx-base: #080;");
-        deleteModeToggleButton.setText("Normal Mode");
-      }
-      redrawList();
-    });
+    menuContainer.getChildren().addAll(logoutButton, deleteModeToggleButton);
 
-    deleteModeToggleButton.setAlignment(Pos.TOP_RIGHT);
+    // user stats section
+    final var userStatsContainer = new VBox();
+    userStatsContainer.setPadding(new Insets(10));
+    userStatsContainer.setSpacing(20);
+    userStatsContainer.setAlignment(Pos.TOP_CENTER);
 
-    // set up the board for the courses, inc. labels
-    final HBox courseBoard = new HBox();
+    final var progressBarMessage = new Label("Your progress so far:");
+    final var progressInNumericalForm = createNumericalProgressRep();
+
+    userStatsContainer.getChildren().addAll(userMessageLabel, progressBarMessage, progressBar, progressInNumericalForm);
+
+    // board section
+    final var courseBoard = new HBox();
     courseBoard.setSpacing(20);
     courseBoard.setPadding(new Insets(30));
 
@@ -369,17 +362,6 @@ public class StudyTrackerUi extends Application {
     courseBoard.getChildren().add(createNewColumn(THIRD_COLUMN_LABEL, completedCourses));
 
     courseBoard.setAlignment(Pos.BASELINE_CENTER);
-
-    // other components
-    final var progressBarMessage = new Label("Your progress so far:");
-    final var progressInNumericalForm = createNumericalProgressRep();
-
-    userStatsContainer.getChildren().addAll(userMessageLabel, progressBarMessage, progressBar, progressInNumericalForm);
-
-    // add menu components to to menu
-    final HBox menuContainer = new HBox(15);
-    menuContainer.setPadding(new Insets(10, 10, 10, 10));
-    menuContainer.getChildren().addAll(logoutButton, deleteModeToggleButton);
 
     // buttons for modifying courses
     final var boardButtonsContainer = new HBox();
@@ -394,27 +376,35 @@ public class StudyTrackerUi extends Application {
 
     addCourseButton.setAlignment(Pos.BASELINE_RIGHT);
 
-    final var modifyCourseButton = new ToggleButton("Modify Courses");
-    modifyCourseButton.setOnAction(e -> {
-      // TODO: logic here...
-    });
-
-    modifyCourseButton.setAlignment(Pos.BASELINE_RIGHT);
-
-    boardButtonsContainer.getChildren().addAll(addCourseButton, modifyCourseButton);
+    boardButtonsContainer.getChildren().add(addCourseButton);
     boardButtonsContainer.setAlignment(Pos.BOTTOM_LEFT);
 
-    // add everything to the outer container
     final var separator = new Separator(Orientation.HORIZONTAL);
-    studyTrackerBoardContainer.getChildren().addAll(separator, courseBoard, boardButtonsContainer);
 
-    final VBox verticalContainer = new VBox(10);
-    // nest menu and board inside scene
+    final var dragAndDropInstruction = new Text("You can move a course by dragging and dropping");
+    dragAndDropInstruction.setFont(Font.font(null, FontWeight.BOLD, 18));
+
+    final var studyTrackerBoardContainer = new VBox();
+    studyTrackerBoardContainer.setPadding(new Insets(10));
+    studyTrackerBoardContainer.setAlignment(Pos.CENTER);
+    studyTrackerBoardContainer.getChildren().addAll(separator, dragAndDropInstruction, courseBoard,
+        boardButtonsContainer);
+
+    // add everything to the outer container
+    final var verticalContainer = new VBox(10);
     verticalContainer.getChildren().addAll(menuContainer, userStatsContainer, studyTrackerBoardContainer);
     return new Scene(verticalContainer, SCENE_WIDTH, SCENE_HEIGHT);
   }
 
   private Scene createNewCourseScene(final Stage window) {
+
+    final var CHOICE_1 = "Not started";
+    final var CHOICE_2 = "Ongoing";
+    final var CHOICE_3 = "Completed";
+
+    final var OPTION_1 = "Yes";
+    final var OPTION_2 = "No";
+
     // container for field group
     final var newCourseFieldGroup = new VBox();
     newCourseFieldGroup.setSpacing(10);
@@ -426,15 +416,19 @@ public class StudyTrackerUi extends Application {
     final var courseCreditsLabel = new Label("Credits");
     final var courseCreditsInput = createIntTextField();
 
-    final var statusLabel = new Label("Status");
-    final var statusInput = createIntTextField();
+    // dropdown menu for selecting course status
+
+    final var completionStatusLabel = new Label("Status");
+    ChoiceBox<String> completionStatusChoice = new ChoiceBox<>();
+    completionStatusChoice.getItems().addAll(CHOICE_1, CHOICE_2, CHOICE_3);
+    completionStatusChoice.setValue(CHOICE_1);
 
     final var courseLinkLabel = new Label("Link");
     final var courseLinkInput = new TextField();
 
     // add fields to field group
     newCourseFieldGroup.getChildren().addAll(courseNameLabel, courseNameInput, courseCreditsLabel, courseCreditsInput,
-        statusLabel, statusInput, courseLinkLabel, courseLinkInput);
+        completionStatusLabel, completionStatusChoice, courseLinkLabel, courseLinkInput);
 
     // horizontal container for checkbox selection - course mandatory or not
     final var statusContainer = new HBox();
@@ -504,11 +498,26 @@ public class StudyTrackerUi extends Application {
           break;
       }
 
-      final var status = Integer.parseInt(statusInput.getText());
+      final var status = (String) completionStatusChoice.getValue();
+      var statusInt = 0;
+
+      switch (status) {
+        case CHOICE_1:
+          statusInt = 0;
+          break;
+        case CHOICE_2:
+          statusInt = 1;
+          break;
+        case CHOICE_3:
+          statusInt = 2;
+          break;
+        default:
+          break;
+      }
 
       final var link = courseLinkInput.getText();
 
-      if (courseService.createCourse(name, credits, compulsoryInteger, status, link)) {
+      if (courseService.createCourse(name, credits, compulsoryInteger, statusInt, link)) {
 
         // refresh data
         redrawList();
@@ -519,7 +528,7 @@ public class StudyTrackerUi extends Application {
 
         // clear inputs
         courseNameInput.clear();
-        statusInput.clear();
+        // statusInput.clear();
         courseLinkInput.clear();
         courseCreditsInput.clear();
       }
@@ -557,18 +566,16 @@ public class StudyTrackerUi extends Application {
 
     final var courseNameLabel = new Label(courseName);
     courseNameLabel.setMinHeight(28);
-    // courseNameLabel.setStyle("-fx-text-fill: ladder(background, white 49%, black
-    // 50%);");
 
     switch (course.getStatus()) {
       case 0:
-        courseNode.setStyle("-fx-background-color:#ffd5c0;");
+        courseNode.setStyle("-fx-background-color:#ffcccb;");
         break;
       case 1:
-        courseNode.setStyle("-fx-background-color: #AED6F1;");
+        courseNode.setStyle("-fx-background-color: #ffffed;");
         break;
       case 2:
-        courseNode.setStyle("-fx-background-color: #ABEBC6;");
+        courseNode.setStyle("-fx-background-color: #90ee90;");
         break;
     }
 
@@ -859,5 +866,26 @@ public class StudyTrackerUi extends Application {
       event.consume();
     });
     return column;
+  }
+
+  private Button createDeleteModeButton(String buttonLabel) {
+    final var button = new Button(buttonLabel);
+
+    button.setOnAction(e -> {
+      deleteMode = !deleteMode;
+      System.out.println(deleteMode);
+      if (deleteMode) {
+        button.setStyle("-fx-base: #E74C3C;");
+        button.setText("Delete Mode");
+      } else {
+        button.setStyle("-fx-base: #080;");
+        button.setText("Normal Mode");
+      }
+      redrawList();
+    });
+
+    button.setAlignment(Pos.TOP_RIGHT);
+
+    return button;
   }
 }
