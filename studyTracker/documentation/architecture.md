@@ -60,14 +60,14 @@ The following sequence diagrams demonstrate the main elements of the application
 
 When the button for logging in is clicked, the following sequence occurs:
 
-![](https://github.com/Nurou/studyTracker/blob/master/studyTracker/documentation/images/login-sequence).
+![](https://github.com/Nurou/studyTracker/blob/master/studyTracker/documentation/images/login-sequence.png).
 
 
 ### New User Creation
 
 When the button for creating a new user is clicked, the following sequence occurs:
 
-![](https://github.com/Nurou/studyTracker/blob/master/studyTracker/documentation/images/create-new-user-sequence).
+![](https://github.com/Nurou/studyTracker/blob/master/studyTracker/documentation/images/create-new-user-sequence.png).
 
 
 ### Adding Courses
