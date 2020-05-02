@@ -60,21 +60,21 @@ The following sequence diagrams demonstrate the main elements of the application
 
 When the button for logging in is clicked, the following sequence occurs:
 
-[](https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/images/login-sequence).
+[](https://github.com/Nurou/studyTracker/blob/master/studyTracker/documentation/images/login-sequence).
 
 
 ### New User Creation
 
 When the button for creating a new user is clicked, the following sequence occurs:
 
-[](https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/images/create-new-user-sequence).
+[](https://github.com/Nurou/studyTracker/blob/master/studyTracker/documentation/images/create-new-user-sequence).
 
 
 ### Adding Courses
 
 New courses can be added by clicking the button for adding courses on the main view, which opens up a dedicated view for the process. The following sequence occurs when course details are provided and the _add course_ button is clicked: 
 
-[](https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/images/add-course-sequence).
+[](https://github.com/Nurou/studyTracker/blob/master/studyTracker/documentation/images/add-course-sequence.png).
 
 A similar sequence of logic occurs for the rest of the functionality of the application, e.g. when courses are added or removed.
 
