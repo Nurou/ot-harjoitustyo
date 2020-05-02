@@ -1,0 +1,18 @@
+CREATE TABLE IF NOT EXISTS User (
+    username TEXT PRIMARY KEY, 
+    name TEXT, password TEXT,
+    program_name TEXT,
+    target_credits INTEGER
+  );
+
+ CREATE TABLE IF NOT EXISTS Course (
+    id INTEGER PRIMARY KEY, 
+    name TEXT, credits 
+    INTEGER NOT NULL, 
+    compulsory INTEGER NOT NULL, 
+    status INTEGER NOT NULL, 
+    course_link TEXT, 
+    username TEXT NOT NULL, 
+    FOREIGN KEY (username) 
+    REFERENCES User (username)
+ );

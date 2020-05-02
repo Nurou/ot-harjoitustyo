@@ -25,7 +25,12 @@ import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -83,6 +88,7 @@ public class StudyTrackerUi extends Application {
 
   /* Globals */
   private boolean deleteMode;
+  private boolean addGradeMode;
 
   // Menu & User Stats
   private final Label userMessageLabel = new Label();
@@ -122,6 +128,7 @@ public class StudyTrackerUi extends Application {
 
     // Globals
     deleteMode = false;
+    addGradeMode = false;
 
     // Database
     final var database = new Database();
@@ -164,12 +171,12 @@ public class StudyTrackerUi extends Application {
     window.setScene(loginScene);
     window.show();
     // prevents closing of app prior to logout
-    // window.setOnCloseRequest(e -> {
-    // System.out.println(userService.getLoggedUser());
-    // if (userService.getLoggedUser() != null) {
-    // e.consume();
-    // }
-    // });
+    window.setOnCloseRequest(e -> {
+      System.out.println(userService.getLoggedUser());
+      if (userService.getLoggedUser() != null) {
+        e.consume();
+      }
+    });
   }
 
   @Override
@@ -336,8 +343,9 @@ public class StudyTrackerUi extends Application {
     logoutButton.setAlignment(Pos.TOP_LEFT);
 
     final var deleteModeToggleButton = createDeleteModeButton("Toggle Delete Mode");
+    final var addGradeButton = createAddGradeButton("Add Grades");
 
-    menuContainer.getChildren().addAll(logoutButton, deleteModeToggleButton);
+    menuContainer.getChildren().addAll(logoutButton, deleteModeToggleButton, addGradeButton);
 
     // user stats section
     final var userStatsContainer = new HBox();
@@ -402,9 +410,6 @@ public class StudyTrackerUi extends Application {
     final var CHOICE_1 = "Not started";
     final var CHOICE_2 = "Ongoing";
     final var CHOICE_3 = "Completed";
-
-    final var OPTION_1 = "Yes";
-    final var OPTION_2 = "No";
 
     // container for field group
     final var newCourseFieldGroup = new VBox();
@@ -559,15 +564,16 @@ public class StudyTrackerUi extends Application {
   private HBox currentCourse = new HBox();
 
   private Node createCourseNode(final Course course) {
+    final var courseName = course.getName();
     final var courseNode = new HBox(10);
     courseNode.setPadding(new Insets(5, 5, 5, 5));
-    courseNode.setStyle("-fx-stroke: grey; -fx-stroke-width: 5;");
+    courseNode.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, Color.LIGHTGRAY, Color.LIGHTGRAY, Color.LIGHTGRAY,
+        BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID,
+        CornerRadii.EMPTY, new BorderWidths(4), Insets.EMPTY)));
 
-    final var courseName = course.getName();
-
-    final var courseNameLabel = new Label(courseName);
-    courseNameLabel.setMinHeight(30);
-    courseNameLabel.setStyle("-fx-text-alignment: center; -fx-font-weight: bold;");
+    final var courseLabel = new Label(courseName + " (" + course.getCredits() + ")");
+    courseLabel.setMinHeight(30);
+    courseLabel.setFont(Font.font(null, FontWeight.BOLD, 16));
 
     switch (course.getStatus()) {
       case 0:
@@ -590,10 +596,20 @@ public class StudyTrackerUi extends Application {
 
     deleteButton.setStyle("-fx-base: #E74C3C;");
 
+    final Button addGradeButton = new Button("Grade");
+    addGradeButton.setOnAction(e -> {
+      // courseService.deleteCourse(courseLabelText);
+      // TODO: logic
+      redrawList();
+      updateProgress();
+    });
+
+    // button only visible in delete mode
+    addGradeButton.setVisible(addGradeMode & course.getStatus() == 2);
     // button only visible in delete mode
     deleteButton.setVisible(deleteMode);
 
-    courseNode.getChildren().addAll(courseNameLabel, deleteButton);
+    courseNode.getChildren().addAll(courseLabel, deleteButton, addGradeButton);
 
     // drag & drop functionality
     courseNode.setOnDragDetected(e -> {
@@ -603,7 +619,7 @@ public class StudyTrackerUi extends Application {
       currentCourse = (HBox) e.getSource();
       final Dragboard db = courseNode.startDragAndDrop(TransferMode.ANY);
       final ClipboardContent content = new ClipboardContent();
-      content.putString(courseNameLabel.getText());
+      content.putString(courseName);
       db.setContent(content);
       e.consume();
 
@@ -886,7 +902,15 @@ public class StudyTrackerUi extends Application {
       redrawList();
     });
 
-    button.setAlignment(Pos.TOP_RIGHT);
+    return button;
+  }
+
+  private Button createAddGradeButton(String buttonLabel) {
+    final var button = new Button(buttonLabel);
+    button.setOnAction(e -> {
+      addGradeMode = !addGradeMode;
+      redrawList();
+    });
 
     return button;
   }

@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import studytrackerapp.dao.CourseDao;
 
+// TODO: refactor this class - courses list
+
 /**
  * A class for creating and modifying Course objects through its corresponding
  * DAO.
@@ -17,7 +19,6 @@ public class CourseService {
   private List<Course> courses;
 
   public CourseService(final CourseDao courseDao) {
-    // initialise DAO
     this.courseDao = courseDao;
     this.courses = new ArrayList<>();
   }
