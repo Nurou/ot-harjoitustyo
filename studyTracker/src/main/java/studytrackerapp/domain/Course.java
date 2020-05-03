@@ -16,6 +16,7 @@ public class Course {
   private int isCompulsory;
   private int status;
   private String courseLink;
+  private int grade;
 
   private User user;
 
@@ -38,6 +39,16 @@ public class Course {
     this.status = status;
     this.courseLink = courseLink;
     this.user = user;
+  }
+
+  public Course(String name, int credits, int isCompulsory, int status, String courseLink, int grade, User user) {
+    this.name = name;
+    this.credits = credits;
+    this.isCompulsory = isCompulsory;
+    this.status = status;
+    this.courseLink = courseLink;
+    this.user = user;
+    this.grade = grade;
   }
 
   public Course(String name, int credits, int isCompulsory, int status, String courseLink) {
@@ -94,6 +105,14 @@ public class Course {
 
   public void setUser(User user) {
     this.user = user;
+  }
+
+  public int getGrade() {
+    return this.grade;
+  }
+
+  public void setGrade(int grade) {
+    this.grade = grade;
   }
 
   @Override

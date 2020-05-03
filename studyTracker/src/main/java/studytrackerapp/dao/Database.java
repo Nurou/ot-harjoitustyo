@@ -82,7 +82,7 @@ public class Database {
       return false;
     }
 
-    String courseTableSql = "CREATE TABLE IF NOT EXISTS Course (id INTEGER PRIMARY KEY, name TEXT, credits INTEGER NOT NULL, compulsory INTEGER NOT NULL, status INTEGER NOT NULL, course_link TEXT, username TEXT NOT NULL, FOREIGN KEY (username) REFERENCES User (username));";
+    String courseTableSql = "CREATE TABLE IF NOT EXISTS Course (id INTEGER PRIMARY KEY, name TEXT, credits INTEGER NOT NULL, compulsory INTEGER NOT NULL, status INTEGER NOT NULL, course_link TEXT, grade INTEGER, username TEXT NOT NULL, FOREIGN KEY (username) REFERENCES User (username));";
 
     try (Statement statement = connection.createStatement()) {
       statement.execute(courseTableSql);

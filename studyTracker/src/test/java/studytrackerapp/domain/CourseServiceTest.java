@@ -50,7 +50,6 @@ public class CourseServiceTest {
 
   @Test
   public void courseCanBeCreated() {
-
     assertNotNull(courseService.retrieveUser());
     assertTrue(courseService.createCourse("test-course", 3, 1, 2, "https://mooc.helsinki.fi/"));
 
@@ -58,7 +57,6 @@ public class CourseServiceTest {
 
   @Test
   public void courseAddedCanBeDeleted() {
-    courseService.retrieveUser();
     courseService.createCourse("test-course", 3, 1, 2, "https://mooc.helsinki.fi/");
     assertTrue(courseService.deleteCourse("test-course"));
   }
@@ -98,11 +96,15 @@ public class CourseServiceTest {
 
   }
 
-  // TODO: tests for weighted average
+  @Test
+  public void canAddAGradeToCourse() throws SQLException {
+    courseService.createCourse("test-course", 5, 1, 1, "");
+    courseService.changeCourseGrade("test-course", 5);
+    assertEquals(5, courseDao.read("test-course").getGrade());
+  }
+
   // @Test
   // public void canCalculateWeightedAverageForUserWithCompletedCourses() {
-  // User user = new User("username", "test-user", "password", "tkt", 180);
-  // courseService.assignUser(user);
   // courseService.createCourse("course1", 10, 1, 2, "");
   // courseService.createCourse("course2", 5, 1, 2, "");
   // courseService.createCourse("course3", 5, 1, 2, "");

@@ -114,12 +114,32 @@ public class CourseService {
 
   }
 
+  /**
+   * 
+   * @param courseName - name of the course to be modified
+   * @param status     - the status to which the course should be updated
+   * @return - course if update successful
+   */
   public Course changeCourseStatus(final String courseName, final int status) throws SQLException {
-    // find course
 
     var course = courseDao.read(courseName);
     course.setStatus(status);
     return courseDao.update(course);
+
+  }
+
+  /**
+   * 
+   * @param courseName - name of the course to be modified
+   * @param grade
+   * @return - course if update successful
+   */
+  public Course changeCourseGrade(String courseName, int grade) throws SQLException {
+
+    var course = courseDao.read(courseName);
+    course.setGrade(grade);
+    return courseDao.update(course);
+
   }
 
   public void setCourses(final List<Course> courses) {

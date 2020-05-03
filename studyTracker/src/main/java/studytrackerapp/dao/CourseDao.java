@@ -52,7 +52,7 @@ public class CourseDao implements Dao<Course, String> {
   @Override
   public Course create(Course course) {
     // define query
-    String sql = "INSERT INTO Course(name, credits, compulsory, status, course_link, username) VALUES (?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO Course(name, credits, compulsory, status, course_link, grade, username) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     try (Connection connection = database.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -62,7 +62,8 @@ public class CourseDao implements Dao<Course, String> {
       statement.setInt(3, course.getIsCompulsory());
       statement.setInt(4, course.getStatus());
       statement.setString(5, course.getCourseLink());
-      statement.setString(6, this.user.getUsername());
+      statement.setInt(6, course.getGrade());
+      statement.setString(7, this.user.getUsername());
       statement.executeUpdate();
     } catch (SQLException e) {
       // nothing returned if a course was not created
@@ -83,7 +84,7 @@ public class CourseDao implements Dao<Course, String> {
   public List<Course> list() {
     List<Course> courses = new ArrayList<>();
 
-    String sql = "SELECT name, credits, compulsory, status, course_link FROM Course WHERE username = ?";
+    String sql = "SELECT name, credits, compulsory, status, course_link, grade FROM Course WHERE username = ?";
 
     try (Connection connection = database.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -99,7 +100,7 @@ public class CourseDao implements Dao<Course, String> {
 
       while (resultSet.next()) {
         courses.add(new Course(resultSet.getString("name"), resultSet.getInt("credits"), resultSet.getInt("compulsory"),
-            resultSet.getInt("status"), resultSet.getString("course_link"), this.user));
+            resultSet.getInt("status"), resultSet.getString("course_link"), resultSet.getInt("grade"), this.user));
       }
     } catch (Exception e) {
       System.err.println(e.getMessage());
@@ -121,7 +122,7 @@ public class CourseDao implements Dao<Course, String> {
     Course found = null;
 
     // define query
-    String sql = "SELECT * FROM Course WHERE name = ?";
+    String sql = "SELECT * FROM Course WHERE name = ? AND username = ?";
 
     // attempt to form a connection
     try (Connection connection = database.getConnection();
@@ -129,13 +130,14 @@ public class CourseDao implements Dao<Course, String> {
 
       // inject query params
       statement.setString(1, courseName);
+      statement.setString(2, this.user.getUsername());
 
       // execute query & store result
       ResultSet resultSet = statement.executeQuery();
 
       // create course
       found = new Course(resultSet.getString("name"), resultSet.getInt("credits"), resultSet.getInt("compulsory"),
-          resultSet.getInt("status"), resultSet.getString("course_link"));
+          resultSet.getInt("status"), resultSet.getString("course_link"), resultSet.getInt("grade"), this.user);
 
     } catch (SQLException e) {
       System.out.println();
@@ -155,13 +157,14 @@ public class CourseDao implements Dao<Course, String> {
    */
   @Override
   public Course update(Course course) throws SQLException {
-    String sql = "UPDATE Course SET status = ? WHERE username = ? AND name = ?";
+    String sql = "UPDATE Course SET status = ?, grade = ? WHERE username = ? AND name = ?";
 
     try (Connection connection = database.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setInt(1, course.getStatus());
-      statement.setString(2, this.user.getUsername());
-      statement.setString(3, course.getName());
+      statement.setInt(2, course.getGrade());
+      statement.setString(3, this.user.getUsername());
+      statement.setString(4, course.getName());
       statement.executeUpdate();
       return course;
     } catch (SQLException e) {

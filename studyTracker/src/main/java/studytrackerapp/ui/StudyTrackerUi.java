@@ -79,7 +79,7 @@ public class StudyTrackerUi extends Application {
   private final int CREATE_USER_WIDTH = 700;
   private final int CREATE_USER_HEIGHT = 500;
 
-  private final double CIRCLE_RADIUS = 80;
+  private final double CIRCLE_RADIUS = 100;
 
   // other
   private final String FIRST_COLUMN_LABEL = "Backlog";
@@ -94,6 +94,7 @@ public class StudyTrackerUi extends Application {
   private final Label userMessageLabel = new Label();
   private final ProgressIndicator progressIndicator = new ProgressIndicator();
   private final Text progressCircleText = new Text();
+  private final Text gpaText = new Text();
 
   // styles
   private final int BUTTON_PADDING = 10;
@@ -183,6 +184,8 @@ public class StudyTrackerUi extends Application {
   public void stop() {
     // clean up
     System.out.println("Application shutting down.");
+    deleteMode = false;
+    addGradeMode = false;
   }
 
   public static void main(final String[] args) {
@@ -342,10 +345,21 @@ public class StudyTrackerUi extends Application {
 
     logoutButton.setAlignment(Pos.TOP_LEFT);
 
-    final var deleteModeToggleButton = createDeleteModeButton("Toggle Delete Mode");
-    final var addGradeButton = createAddGradeButton("Add Grades");
+    final var deleteModeButton = new Button("Remove Courses");
+    deleteModeButton.setStyle("-fx-base: #add8e6;");
+    deleteModeButton.setOnAction(e -> {
+      deleteMode = !deleteMode;
+      redrawList();
+    });
 
-    menuContainer.getChildren().addAll(logoutButton, deleteModeToggleButton, addGradeButton);
+    final var addGradeButton = new Button("Add Grades");
+    addGradeButton.setStyle("-fx-base: #add8e6;");
+    addGradeButton.setOnAction(e -> {
+      addGradeMode = !addGradeMode;
+      redrawList();
+    });
+
+    menuContainer.getChildren().addAll(logoutButton, deleteModeButton, addGradeButton);
 
     // user stats section
     final var userStatsContainer = new HBox();
@@ -353,11 +367,12 @@ public class StudyTrackerUi extends Application {
     userStatsContainer.setSpacing(20);
     userStatsContainer.setAlignment(Pos.TOP_CENTER);
 
-    final var progressInNumericalForm = createNumericalProgressRep();
+    final var progressInNumericalForm = createCircleStat(progressCircleText);
+    final var gpaStat = createCircleStat(gpaText);
     progressIndicator.setStyle(" -fx-progress-color: green;");
     progressIndicator.setMinSize(160, 160);
 
-    userStatsContainer.getChildren().addAll(progressIndicator, progressInNumericalForm);
+    userStatsContainer.getChildren().addAll(progressInNumericalForm, gpaStat);
 
     // board section
     final var courseBoard = new HBox();
@@ -425,7 +440,7 @@ public class StudyTrackerUi extends Application {
     // dropdown menu for selecting course status
 
     final var completionStatusLabel = new Label("Status");
-    ChoiceBox<String> completionStatusChoice = new ChoiceBox<>();
+    final ChoiceBox<String> completionStatusChoice = new ChoiceBox<>();
     completionStatusChoice.getItems().addAll(CHOICE_1, CHOICE_2, CHOICE_3);
     completionStatusChoice.setValue(CHOICE_1);
 
@@ -571,7 +586,7 @@ public class StudyTrackerUi extends Application {
         BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID,
         CornerRadii.EMPTY, new BorderWidths(4), Insets.EMPTY)));
 
-    final var courseLabel = new Label(courseName + " (" + course.getCredits() + ")");
+    final var courseLabel = new Label(courseName);
     courseLabel.setMinHeight(30);
     courseLabel.setFont(Font.font(null, FontWeight.BOLD, 16));
 
@@ -587,7 +602,7 @@ public class StudyTrackerUi extends Application {
         break;
     }
 
-    final Button deleteButton = new Button("Delete");
+    final var deleteButton = new Button("Delete");
     deleteButton.setOnAction(e -> {
       courseService.deleteCourse(courseName);
       redrawList();
@@ -596,20 +611,26 @@ public class StudyTrackerUi extends Application {
 
     deleteButton.setStyle("-fx-base: #E74C3C;");
 
-    final Button addGradeButton = new Button("Grade");
+    final var gradeField = createIntTextField();
+    gradeField.setPrefWidth(60);
+
+    final var addGradeButton = new Button("Grade");
+
     addGradeButton.setOnAction(e -> {
-      // courseService.deleteCourse(courseLabelText);
-      // TODO: logic
+      try {
+        courseService.changeCourseGrade(courseName, Integer.parseInt(gradeField.getText()));
+      } catch (SQLException e1) {
+        e1.printStackTrace();
+      }
       redrawList();
       updateProgress();
     });
 
-    // button only visible in delete mode
     addGradeButton.setVisible(addGradeMode & course.getStatus() == 2);
-    // button only visible in delete mode
+    gradeField.setVisible(addGradeMode & course.getStatus() == 2);
     deleteButton.setVisible(deleteMode);
 
-    courseNode.getChildren().addAll(courseLabel, deleteButton, addGradeButton);
+    courseNode.getChildren().addAll(courseLabel, deleteButton, addGradeButton, gradeField);
 
     // drag & drop functionality
     courseNode.setOnDragDetected(e -> {
@@ -665,11 +686,19 @@ public class StudyTrackerUi extends Application {
   private void updateProgress() {
     final var targetCredits = userService.getLoggedUser().getTarget();
     final var completedStatus = 2;
+    var hasCompletedACourse = false;
 
     // first need to check if user has any courses
     if (courseService.getCourses().isEmpty()) {
-      progressIndicator.setProgress(0);
-      progressCircleText.setText(0 + " / " + targetCredits);
+      progressCircleText.setText("Progress: N/A");
+      gpaText.setText("GPA: N/A");
+      return;
+    }
+
+    // are any completed?
+    if ((courseService.getCourses().stream().filter(c -> (c.getStatus() == 2))).findFirst().orElse(null) == null) {
+      progressCircleText.setText("Progress: N/A");
+      gpaText.setText("GPA: N/A");
       return;
     }
 
@@ -680,8 +709,22 @@ public class StudyTrackerUi extends Application {
     final var currentProgressAsFraction = (double) currentCredits / targetCredits;
     System.out.println(currentProgressAsFraction);
 
-    progressIndicator.setProgress(currentProgressAsFraction);
-    progressCircleText.setText(currentCredits + " / " + targetCredits);
+    progressCircleText.setText("Progress: " + currentCredits + " / " + targetCredits);
+
+    var weightedAverage = 0;
+    var numerator = 0;
+    var denominator = 0;
+
+    for (Course c : courseService.getCourses()) {
+      if (c.getGrade() == 0)
+        continue;
+      denominator += c.getCredits();
+      numerator += c.getCredits() * c.getGrade();
+    }
+
+    weightedAverage = numerator / denominator;
+
+    gpaText.setText("GPA: " + String.valueOf(weightedAverage));
   }
 
   public void setLoginMessage() {
@@ -733,13 +776,13 @@ public class StudyTrackerUi extends Application {
     return circle;
   }
 
-  private StackPane createNumericalProgressRep() {
+  private StackPane createCircleStat(Text text) {
     final var progressCircle = createCircle();
-    progressCircleText.setBoundsType(TextBoundsType.VISUAL);
-    progressCircleText.setFont(Font.font(null, FontWeight.BOLD, 24));
+    text.setBoundsType(TextBoundsType.VISUAL);
+    text.setFont(Font.font(null, FontWeight.BOLD, 18));
 
     final var stack = new StackPane();
-    stack.getChildren().addAll(progressCircle, progressCircleText);
+    stack.getChildren().addAll(progressCircle, text);
     stack.setLayoutX(30);
     stack.setLayoutY(30);
 
@@ -886,32 +929,4 @@ public class StudyTrackerUi extends Application {
     return column;
   }
 
-  private Button createDeleteModeButton(String buttonLabel) {
-    final var button = new Button(buttonLabel);
-
-    button.setOnAction(e -> {
-      deleteMode = !deleteMode;
-      System.out.println(deleteMode);
-      if (deleteMode) {
-        button.setStyle("-fx-base: #E74C3C;");
-        button.setText("Delete Mode");
-      } else {
-        button.setStyle("-fx-base: #080;");
-        button.setText("Normal Mode");
-      }
-      redrawList();
-    });
-
-    return button;
-  }
-
-  private Button createAddGradeButton(String buttonLabel) {
-    final var button = new Button(buttonLabel);
-    button.setOnAction(e -> {
-      addGradeMode = !addGradeMode;
-      redrawList();
-    });
-
-    return button;
-  }
 }
