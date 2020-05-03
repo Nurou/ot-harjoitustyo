@@ -4,8 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * The DAO API keeps the domain model completely decoupled from the persistence
- * layer
+ * Generic DAO API that keeps the domain model completely decoupled from the
+ * persistence layer
  * 
  * It defines CRUD operations for the DAOs to implement
  * 

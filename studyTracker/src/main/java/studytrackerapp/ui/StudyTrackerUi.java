@@ -653,8 +653,6 @@ public class StudyTrackerUi extends Application {
    * Util Methods
    */
 
-  // TODO: Place these somewhere else
-
   /**
    * This method is used for text-field inputs that need to be restricted to
    * numbers only
@@ -681,22 +679,17 @@ public class StudyTrackerUi extends Application {
   /**
    * Calculates a user's current progress in their program
    * 
-   * @return - the progress as a decimal fraction
+   * @return the progress as a decimal fraction
    */
   private void updateProgress() {
     final var targetCredits = userService.getLoggedUser().getTarget();
     final var completedStatus = 2;
-    var hasCompletedACourse = false;
+    var userHasCourses = courseService.getCourses().isEmpty();
+    var userHasCompletedACourse = courseService.getCourses().stream().filter(c -> (c.getStatus() == 2)).findFirst()
+        .orElse(null) == null;
 
     // first need to check if user has any courses
-    if (courseService.getCourses().isEmpty()) {
-      progressCircleText.setText("Progress: N/A");
-      gpaText.setText("GPA: N/A");
-      return;
-    }
-
-    // are any completed?
-    if ((courseService.getCourses().stream().filter(c -> (c.getStatus() == 2))).findFirst().orElse(null) == null) {
+    if (userHasCourses || userHasCompletedACourse) {
       progressCircleText.setText("Progress: N/A");
       gpaText.setText("GPA: N/A");
       return;

@@ -98,9 +98,8 @@ public class CourseService {
 
   public boolean deleteCourse(final String course) {
 
-    final var currentCourses = getCourses().stream().map(c -> c.getName()).collect(Collectors.toList());
-
-    if (!currentCourses.contains(course)) {
+    final var existingCourseNames = getCourses().stream().map(c -> c.getName()).collect(Collectors.toList());
+    if (!existingCourseNames.contains(course)) {
       return false;
     }
 
@@ -118,7 +117,7 @@ public class CourseService {
    * 
    * @param courseName - name of the course to be modified
    * @param status     - the status to which the course should be updated
-   * @return - course if update successful
+   * @return course if update successful
    */
   public Course changeCourseStatus(final String courseName, final int status) throws SQLException {
 
@@ -132,7 +131,7 @@ public class CourseService {
    * 
    * @param courseName - name of the course to be modified
    * @param grade
-   * @return - course if update successful
+   * @return course if update successful
    */
   public Course changeCourseGrade(String courseName, int grade) throws SQLException {
 

@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * This class provides shared functionality for the DAO classes that interface
- * with the db
+ * Provides shared functionality for the DAO classes and is used to initialize
+ * the database
  * 
  * @author joelhassan
  */
@@ -23,7 +23,7 @@ public class Database {
    * Opens a connection to the database using JDBC DriverManager
    * 
    * @return connection object representing a connection to a database
-   * @throws SQLException (connection cannot be established)
+   * @throws SQLException if connection cannot be expected
    */
 
   public Connection getConnection() throws SQLException {
@@ -64,10 +64,10 @@ public class Database {
   }
 
   /**
-   * Adds the required tables to the db
+   * Adds relations for the entities defined in the schema
    * 
-   * @param connection - the context in which the queries are executed
-   * @throws SQLException - throws an error if there was an issue creating the
+   * @param connection the context in which the queries are executed
+   * @throws SQLException throws an error if there was an issue creating the
    *                      tables
    * @return true if successful, false otherwise
    */

@@ -3,8 +3,8 @@ package studytrackerapp.domain;
 import studytrackerapp.dao.UserDao;
 
 /**
- * This UserService class provides methods to the UI and triggers database
- * actions by interfacing with UserDao.
+ * A class for creating and modifying User objects through its corresponding
+ * DAO.
  */
 public class UserService {
 

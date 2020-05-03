@@ -10,7 +10,7 @@ import studytrackerapp.domain.Course;
 import studytrackerapp.domain.User;
 
 /**
- * Interface between Course objects and db courses
+ * DAO mapping of Course object to Course database entity
  *
  */
 
@@ -153,7 +153,7 @@ public class CourseDao implements Dao<Course, String> {
    * updates a course with the properties in the object passed as an argument
    * 
    * @param course - the course to be updated in the db
-   * @return - the course if update successful, null otherwise
+   * @return the course if update successful, null otherwise
    */
   @Override
   public Course update(Course course) throws SQLException {

@@ -8,7 +8,7 @@ import java.util.List;
 import studytrackerapp.domain.User;
 
 /**
- * Interface between User objects and db users
+ * DAO mapping of User object to User database entity
  *
  */
 public class UserDao implements Dao<User, String> {
@@ -82,7 +82,6 @@ public class UserDao implements Dao<User, String> {
           resultSet.getString("program_name"), resultSet.getInt("target_credits"));
 
     } catch (SQLException e) {
-      System.out.println();
       System.err.println("Error in UserDao - unable to retrieve user \n" + e.getMessage());
       return found;
     }
@@ -93,19 +92,16 @@ public class UserDao implements Dao<User, String> {
 
   @Override
   public User update(User user) {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public List<User> list() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public boolean delete(String key) {
-    // TODO Auto-generated method stub
     return false;
   }
 

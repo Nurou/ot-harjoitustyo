@@ -103,11 +103,4 @@ public class CourseServiceTest {
     assertEquals(5, courseDao.read("test-course").getGrade());
   }
 
-  // @Test
-  // public void canCalculateWeightedAverageForUserWithCompletedCourses() {
-  // courseService.createCourse("course1", 10, 1, 2, "");
-  // courseService.createCourse("course2", 5, 1, 2, "");
-  // courseService.createCourse("course3", 5, 1, 2, "");
-  // assertTrue(courseService.calculateWeightedAeverage, condition);
-  // }
 }
