@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 
 import studytrackerapp.dao.CourseDao;
 
-// TODO: refactor this class - courses list
-
 /**
  * A class for creating and modifying Course objects through its corresponding
  * DAO.
@@ -16,11 +14,9 @@ import studytrackerapp.dao.CourseDao;
 public class CourseService {
 
   private final CourseDao courseDao;
-  private List<Course> courses;
 
   public CourseService(final CourseDao courseDao) {
     this.courseDao = courseDao;
-    this.courses = new ArrayList<>();
   }
 
   /**
@@ -46,14 +42,12 @@ public class CourseService {
    * @param credits      - the number of credits the course is worth
    * @param isCompulsory - whether the course is compulsory or not
    * @param status       - completion status
-   * @param courseLink   - a link to the course
    * 
    * @return true if course was created, false otherwise
    */
-  public boolean createCourse(final String name, final int credits, final int isCompulsory, final int status,
-      final String courseLink) {
+  public boolean createCourse(final String name, final int credits, final int isCompulsory, final int status) {
 
-    for (final Course course : courses) {
+    for (final Course course : getCourses()) {
       if (course.getName().equals(name)) {
         System.out.println("The course '" + name + "' has already been added.");
         return false;
@@ -61,7 +55,7 @@ public class CourseService {
     }
 
     try {
-      final Course newCourse = courseDao.create(new Course(name, credits, isCompulsory, status, courseLink));
+      final Course newCourse = courseDao.create(new Course(name, credits, isCompulsory, status));
 
       if (newCourse != null) {
         System.out.println("Course '" + name + "' added");
@@ -83,11 +77,7 @@ public class CourseService {
    */
 
   public List<Course> getCourses() {
-    final List<Course> courses = this.courseDao.list().stream().collect(Collectors.toList());
-
-    setCourses(courses);
-
-    return this.courses;
+    return this.courseDao.list().stream().collect(Collectors.toList());
   }
 
   /**
@@ -136,12 +126,12 @@ public class CourseService {
   public Course changeCourseGrade(String courseName, int grade) throws SQLException {
 
     var course = courseDao.read(courseName);
-    course.setGrade(grade);
-    return courseDao.update(course);
+    if (course.getStatus() == 2) {
+      course.setGrade(grade);
+      return courseDao.update(course);
+    }
+    return course;
 
   }
 
-  public void setCourses(final List<Course> courses) {
-    this.courses = courses;
-  }
 }

@@ -12,6 +12,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -53,8 +54,6 @@ import studytrackerapp.domain.*;
  *
  * @author joelhassan
  */
-// TODO: scene creation should be abstracted
-// TODO: get rid of magic numbers - place dimensions in constants
 
 public class StudyTrackerUi extends Application {
 
@@ -87,8 +86,9 @@ public class StudyTrackerUi extends Application {
   private final String THIRD_COLUMN_LABEL = "Done";
 
   /* Globals */
-  private boolean deleteMode;
-  private boolean addGradeMode;
+  private boolean deleteMode = false;
+  private boolean addGradeMode = false;
+  private HBox currentCourse = new HBox();
 
   // Menu & User Stats
   private final Label userMessageLabel = new Label();
@@ -126,10 +126,6 @@ public class StudyTrackerUi extends Application {
 
   @Override
   public void init() throws Exception {
-
-    // Globals
-    deleteMode = false;
-    addGradeMode = false;
 
     // Database
     final var database = new Database();
@@ -254,7 +250,7 @@ public class StudyTrackerUi extends Application {
     createUserFieldGroup.setPadding(new Insets(FIELD_GROUP_PADDING));
 
     // container for buttons
-    final var buttonContainer = new HBox(FIELD_GROUP_SPACING);
+    final var buttonContainer = new ButtonBar();
     buttonContainer.setPadding(new Insets(FIELD_GROUP_PADDING));
 
     // fields
@@ -283,7 +279,7 @@ public class StudyTrackerUi extends Application {
     returnButton.setPadding(new Insets(BUTTON_PADDING));
 
     // add buttons to their container
-    buttonContainer.getChildren().addAll(createUserButton, returnButton);
+    buttonContainer.getButtons().addAll(createUserButton, returnButton);
 
     // event handlers for buttons
     createUserButton.setOnAction(e -> {
@@ -403,20 +399,17 @@ public class StudyTrackerUi extends Application {
 
     final var separator = new Separator(Orientation.HORIZONTAL);
 
-    final var dragAndDropInstruction = new Text("Use drag & drop to move courses");
-    dragAndDropInstruction.setFont(Font.font(null, FontWeight.BOLD, 18));
-
     final var studyTrackerBoardContainer = new VBox();
-    studyTrackerBoardContainer.setPadding(new Insets(10));
+    studyTrackerBoardContainer.setPadding(new Insets(20));
     studyTrackerBoardContainer.setAlignment(Pos.CENTER);
-    studyTrackerBoardContainer.getChildren().addAll(separator, dragAndDropInstruction, courseBoard,
-        boardButtonsContainer);
+    studyTrackerBoardContainer.getChildren().addAll(separator, courseBoard, boardButtonsContainer);
 
     // add everything to the outer container
     final var verticalContainer = new VBox(10);
     verticalContainer.getChildren().addAll(menuContainer, userMessageLabel, userStatsContainer,
         studyTrackerBoardContainer);
     verticalContainer.setAlignment(Pos.CENTER);
+    verticalContainer.setPadding(new Insets(30));
     return new Scene(verticalContainer, SCENE_WIDTH, SCENE_HEIGHT);
   }
 
@@ -425,6 +418,9 @@ public class StudyTrackerUi extends Application {
     final var CHOICE_1 = "Not started";
     final var CHOICE_2 = "Ongoing";
     final var CHOICE_3 = "Completed";
+
+    final var OPTION_1 = "Yes";
+    final var OPTION_2 = "No";
 
     // container for field group
     final var newCourseFieldGroup = new VBox();
@@ -444,12 +440,9 @@ public class StudyTrackerUi extends Application {
     completionStatusChoice.getItems().addAll(CHOICE_1, CHOICE_2, CHOICE_3);
     completionStatusChoice.setValue(CHOICE_1);
 
-    final var courseLinkLabel = new Label("Link");
-    final var courseLinkInput = new TextField();
-
     // add fields to field group
     newCourseFieldGroup.getChildren().addAll(courseNameLabel, courseNameInput, courseCreditsLabel, courseCreditsInput,
-        completionStatusLabel, completionStatusChoice, courseLinkLabel, courseLinkInput);
+        completionStatusLabel, completionStatusChoice);
 
     // horizontal container for checkbox selection - course mandatory or not
     final var statusContainer = new HBox();
@@ -457,7 +450,8 @@ public class StudyTrackerUi extends Application {
     statusContainer.getChildren().add(mandatoryLabel);
 
     // allow only one checkbox to be selected at once
-    final var checkboxOptions = new String[] { "Yes ", "No " };
+
+    final var checkboxOptions = new String[] { OPTION_1, OPTION_2 };
     // max number of active selections
     final var maxCount = 1;
     final var activeBoxes = new LinkedHashSet<CheckBox>();
@@ -492,7 +486,7 @@ public class StudyTrackerUi extends Application {
     }
 
     // buttons
-    final var buttonContainer = new HBox();
+    final var buttonContainer = new ButtonBar();
     final var addCourseButton = new Button("Add");
     addCourseButton.setOnAction(e -> {
       // swoop all the course info
@@ -508,14 +502,14 @@ public class StudyTrackerUi extends Application {
       var compulsoryInteger = 0;
 
       switch (compulsoryString) {
-        case "Yes":
+        case OPTION_1:
           compulsoryInteger = 1;
           break;
-        case "No":
+        case OPTION_2:
           compulsoryInteger = 0;
           break;
         default:
-          compulsoryInteger = 1;
+          System.out.println("No checkbox option chosen");
           break;
       }
 
@@ -536,9 +530,7 @@ public class StudyTrackerUi extends Application {
           break;
       }
 
-      final var link = courseLinkInput.getText();
-
-      if (courseService.createCourse(name, credits, compulsoryInteger, statusInt, link)) {
+      if (courseService.createCourse(name, credits, compulsoryInteger, statusInt)) {
 
         // refresh data
         redrawList();
@@ -550,7 +542,6 @@ public class StudyTrackerUi extends Application {
         // clear inputs
         courseNameInput.clear();
         // statusInput.clear();
-        courseLinkInput.clear();
         courseCreditsInput.clear();
       }
 
@@ -562,7 +553,7 @@ public class StudyTrackerUi extends Application {
       window.setScene(studyTrackingScene);
     });
 
-    buttonContainer.getChildren().addAll(addCourseButton, returnButton);
+    buttonContainer.getButtons().addAll(addCourseButton, returnButton);
 
     // place containers inside outer container
     final var wrapperContainer = new BorderPane();
@@ -572,19 +563,23 @@ public class StudyTrackerUi extends Application {
     wrapperContainer.setCenter(statusContainer);
     wrapperContainer.setBottom(buttonContainer);
 
-    return new Scene(wrapperContainer, 400, SCENE_HEIGHT);
+    return new Scene(wrapperContainer, 400, 600);
 
   }
-
-  private HBox currentCourse = new HBox();
 
   private Node createCourseNode(final Course course) {
     final var courseName = course.getName();
     final var courseNode = new HBox(10);
     courseNode.setPadding(new Insets(5, 5, 5, 5));
-    courseNode.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, Color.LIGHTGRAY, Color.LIGHTGRAY, Color.LIGHTGRAY,
-        BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID,
-        CornerRadii.EMPTY, new BorderWidths(4), Insets.EMPTY)));
+
+    System.out.println(course.getIsCompulsory());
+
+    // show border color in different color if course is compulsory
+    if (course.getIsCompulsory() == 1) {
+      courseNode.setBorder(new Border(
+          new BorderStroke(Color.RED, Color.RED, Color.RED, Color.RED, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID,
+              BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3), Insets.EMPTY)));
+    }
 
     final var courseLabel = new Label(courseName);
     courseLabel.setMinHeight(30);
@@ -715,7 +710,9 @@ public class StudyTrackerUi extends Application {
       numerator += c.getCredits() * c.getGrade();
     }
 
-    weightedAverage = numerator / denominator;
+    if (denominator > 0) {
+      weightedAverage = numerator / denominator;
+    }
 
     gpaText.setText("GPA: " + String.valueOf(weightedAverage));
   }
@@ -726,7 +723,7 @@ public class StudyTrackerUi extends Application {
     // capitalize first letter of name
     studentName = studentName.substring(0, 1).toUpperCase() + studentName.substring(1).toLowerCase();
 
-    userMessageLabel.setText("Hey " + studentName + "! Here's your profile and progress");
+    userMessageLabel.setText("Hey " + studentName + "!");
     userMessageLabel.setFont(Font.font(null, FontWeight.BOLD, 18));
   }
 
@@ -844,6 +841,7 @@ public class StudyTrackerUi extends Application {
   private VBox createNewColumn(final String label, final VBox courseList) {
 
     final var columnLabel = new Label(label);
+    columnLabel.setFont(Font.font(null, FontWeight.BOLD, 18));
 
     final var scroll = new ScrollPane();
     scroll.setMinHeight(300);
@@ -881,7 +879,6 @@ public class StudyTrackerUi extends Application {
               redrawList();
               updateProgress();
             } catch (final SQLException e) {
-              // TODO: do something more helpful with these
               e.printStackTrace();
             }
             break;
@@ -915,7 +912,7 @@ public class StudyTrackerUi extends Application {
 
     column.setOnDragDone(event -> {
       if (event.getTransferMode() == TransferMode.MOVE) {
-        System.out.println("Drag Done");
+        System.out.println("Drag Complete");
       }
       event.consume();
     });

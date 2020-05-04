@@ -65,9 +65,4 @@ public class DatabaseTest {
     assertTrue(testDatabase.createTables(DriverManager.getConnection("jdbc:sqlite:test.db")));
   }
 
-  @Test
-  public void canCreateCourseTable() {
-
-  }
-
 }

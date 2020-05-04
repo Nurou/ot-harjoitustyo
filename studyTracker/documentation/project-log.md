@@ -18,5 +18,6 @@
 | 20.04 - 21.04 | 13         | New UI functionality, testing, Jar/Maven issues,documentation                                  |
 |     28.04     | 6          | UI refactoring, Javadoc, maven/pom debugging                                                   |
 |     02.5      | 7          | FXML refactor attempt, Documentation, Sequence Diagrams                                        |
+|     05.5      | 1          | Refactoring and completing UI                                                                  |
 |               |            |                                                                                                |
-|     total     | 73.5       |
+|     total     | 74.5       |

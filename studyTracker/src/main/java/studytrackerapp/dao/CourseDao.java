@@ -52,7 +52,7 @@ public class CourseDao implements Dao<Course, String> {
   @Override
   public Course create(Course course) {
     // define query
-    String sql = "INSERT INTO Course(name, credits, compulsory, status, course_link, grade, username) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO Course(name, credits, compulsory, status, grade, username) VALUES (?, ?, ?, ?, ?, ?)";
 
     try (Connection connection = database.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -61,12 +61,10 @@ public class CourseDao implements Dao<Course, String> {
       statement.setInt(2, course.getCredits());
       statement.setInt(3, course.getIsCompulsory());
       statement.setInt(4, course.getStatus());
-      statement.setString(5, course.getCourseLink());
-      statement.setInt(6, course.getGrade());
-      statement.setString(7, this.user.getUsername());
+      statement.setInt(5, course.getGrade());
+      statement.setString(6, this.user.getUsername());
       statement.executeUpdate();
     } catch (SQLException e) {
-      // nothing returned if a course was not created
       return null;
     }
 
@@ -84,7 +82,7 @@ public class CourseDao implements Dao<Course, String> {
   public List<Course> list() {
     List<Course> courses = new ArrayList<>();
 
-    String sql = "SELECT name, credits, compulsory, status, course_link, grade FROM Course WHERE username = ?";
+    String sql = "SELECT name, credits, compulsory, status, grade FROM Course WHERE username = ?";
 
     try (Connection connection = database.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -100,7 +98,7 @@ public class CourseDao implements Dao<Course, String> {
 
       while (resultSet.next()) {
         courses.add(new Course(resultSet.getString("name"), resultSet.getInt("credits"), resultSet.getInt("compulsory"),
-            resultSet.getInt("status"), resultSet.getString("course_link"), resultSet.getInt("grade"), this.user));
+            resultSet.getInt("status"), resultSet.getInt("grade"), this.user));
       }
     } catch (Exception e) {
       System.err.println(e.getMessage());
@@ -137,7 +135,7 @@ public class CourseDao implements Dao<Course, String> {
 
       // create course
       found = new Course(resultSet.getString("name"), resultSet.getInt("credits"), resultSet.getInt("compulsory"),
-          resultSet.getInt("status"), resultSet.getString("course_link"), resultSet.getInt("grade"), this.user);
+          resultSet.getInt("status"), resultSet.getInt("grade"), this.user);
 
     } catch (SQLException e) {
       System.out.println();

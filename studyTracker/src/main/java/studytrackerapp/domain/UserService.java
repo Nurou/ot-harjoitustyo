@@ -12,7 +12,6 @@ public class UserService {
   private User currentlyLoggedIn;
 
   public UserService(UserDao userDao) {
-    // initialise DAO
     this.userDao = userDao;
   }
 
@@ -33,9 +32,6 @@ public class UserService {
     }
 
     if (!(password.equals(user.getPassword()))) {
-      System.out.println("Db pass: " + user.getPassword());
-      System.out.println("Param pass: " + password);
-      System.out.println("Can't login!");
       return false;
     }
 

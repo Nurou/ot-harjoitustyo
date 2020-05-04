@@ -39,7 +39,6 @@ public class CourseServiceTest {
     System.out.println("CourseService test set up successful.");
   }
 
-  /* runs after each test method */
   @After
   public void tearDown() {
     // wrap db resource in a File object
@@ -51,13 +50,12 @@ public class CourseServiceTest {
   @Test
   public void courseCanBeCreated() {
     assertNotNull(courseService.retrieveUser());
-    assertTrue(courseService.createCourse("test-course", 3, 1, 2, "https://mooc.helsinki.fi/"));
-
+    assertTrue(courseService.createCourse("test-course", 3, 1, 2));
   }
 
   @Test
   public void courseAddedCanBeDeleted() {
-    courseService.createCourse("test-course", 3, 1, 2, "https://mooc.helsinki.fi/");
+    courseService.createCourse("test-course", 3, 1, 2);
     assertTrue(courseService.deleteCourse("test-course"));
   }
 
@@ -69,8 +67,8 @@ public class CourseServiceTest {
 
   @Test
   public void usersCoursesCanBeListed() {
-    courseService.createCourse("first course", 3, 1, 2, "https://mooc.helsinki.fi/");
-    courseService.createCourse("second course", 3, 1, 2, "https://mooc.helsinki.fi/");
+    courseService.createCourse("first course", 3, 1, 2);
+    courseService.createCourse("second course", 3, 1, 2);
     assertEquals("first course", courseService.getCourses().get(0).getName());
     assertEquals("second course", courseService.getCourses().get(1).getName());
   }
@@ -82,14 +80,14 @@ public class CourseServiceTest {
 
   @Test
   public void sameCourseCannotBeAddedTwiceForSameUser() {
-    assertTrue(courseService.createCourse("test-course", 3, 1, 2, ""));
+    assertTrue(courseService.createCourse("test-course", 3, 1, 2));
     courseService.getCourses();
-    assertFalse(courseService.createCourse("test-course", 3, 1, 2, ""));
+    assertFalse(courseService.createCourse("test-course", 3, 1, 2));
   }
 
   @Test
   public void courseStatusCanBeModified() throws SQLException {
-    courseService.createCourse("test-course", 5, 1, 1, "");
+    courseService.createCourse("test-course", 5, 1, 1);
     courseService.changeCourseStatus("test-course", 2);
 
     assertEquals(2, courseDao.read("test-course").getStatus());
@@ -98,9 +96,16 @@ public class CourseServiceTest {
 
   @Test
   public void canAddAGradeToCourse() throws SQLException {
-    courseService.createCourse("test-course", 5, 1, 1, "");
+    courseService.createCourse("test-course", 5, 1, 2);
     courseService.changeCourseGrade("test-course", 5);
     assertEquals(5, courseDao.read("test-course").getGrade());
+  }
+
+  @Test
+  public void gradeCannotBeAddedToUncompletedCourses() throws SQLException {
+    courseService.createCourse("test-course", 5, 1, 1);
+    courseService.changeCourseGrade("test-course", 5);
+    assertEquals(0, courseDao.read("test-course").getGrade());
   }
 
 }
