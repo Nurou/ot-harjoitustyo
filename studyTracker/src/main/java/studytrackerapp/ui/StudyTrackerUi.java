@@ -72,20 +72,17 @@ public class StudyTrackerUi extends Application {
   private final int FIELD_GROUP_SPACING = 10;
   private final int FIELD_GROUP_PADDING = 15;
 
-  private final int SCENE_WIDTH = 1000;
-  private final int SCENE_HEIGHT = 900;
+  // styles
+  private final int BUTTON_PADDING = 10;
 
-  private final int CREATE_USER_WIDTH = 700;
-  private final int CREATE_USER_HEIGHT = 500;
-
-  private final double CIRCLE_RADIUS = 100;
-
-  // other
   private final String FIRST_COLUMN_LABEL = "Backlog";
   private final String SECOND_COLUMN_LABEL = "Ongoing";
   private final String THIRD_COLUMN_LABEL = "Done";
 
-  /* Globals */
+  /**
+   * Globals
+   */
+
   private boolean deleteMode = false;
   private boolean addGradeMode = false;
   private HBox currentCourse = new HBox();
@@ -96,21 +93,18 @@ public class StudyTrackerUi extends Application {
   private final Text progressCircleText = new Text();
   private final Text gpaText = new Text();
 
-  // styles
-  private final int BUTTON_PADDING = 10;
+  // Nodes
+  private final VBox backlogCourses = new VBox();
+  private final VBox ongoingCourses = new VBox();
+  private final VBox completedCourses = new VBox();
 
-  /* Application Views */
+  /**
+   * Application Views
+   */
   private Scene loginScene;
   private Scene newUserScene;
   private Scene newCourseScene;
   private Scene studyTrackingScene;
-
-  /**
-   * Nodes
-   */
-  private final VBox backlogCourses = new VBox();
-  private final VBox ongoingCourses = new VBox();
-  private final VBox completedCourses = new VBox();
 
   /**
    * Services
@@ -121,7 +115,7 @@ public class StudyTrackerUi extends Application {
   /**
    * Initializes everything needed for the app to run
    * 
-   * @throws Exception unable to initialize application
+   * @throws Exception when it's unable to initialize the app
    */
 
   @Override
@@ -131,7 +125,7 @@ public class StudyTrackerUi extends Application {
     final var database = new Database();
     database.createDatabase("study-tracker.db");
 
-    // Daos
+    // DAOs
     final var userDao = new UserDao(database);
     final var courseDao = new CourseDao(database);
 
@@ -195,6 +189,9 @@ public class StudyTrackerUi extends Application {
 
   private Scene createLoginScene(final Stage window) {
 
+    final var LOGIN_WIDTH = 350;
+    final var LOGIN_HEIGHT = 500;
+
     // login input fields
     final var usernameLabel = new Label("Username");
     usernameLabel.setPrefWidth(100);
@@ -232,7 +229,7 @@ public class StudyTrackerUi extends Application {
         createUserSceneLabel, createUserSceneButton);
 
     // place container within view
-    return new Scene(loginContainer, 350, 500);
+    return new Scene(loginContainer, LOGIN_WIDTH, LOGIN_HEIGHT);
   }
 
   /**
@@ -240,6 +237,9 @@ public class StudyTrackerUi extends Application {
    * @return Scene
    */
   private Scene createNewUserScene(final Stage window) {
+
+    final int CREATE_USER_WIDTH = 400;
+    final int CREATE_USER_HEIGHT = 500;
 
     // main container
     final var createUserContainer = new VBox(CONTAINER_SPACING);
@@ -326,11 +326,14 @@ public class StudyTrackerUi extends Application {
     createUserContainer.getChildren().addAll(createUserMessage, createUserFieldGroup, buttonContainer);
 
     // place container within view
-    return new Scene(createUserContainer, 400, CREATE_USER_HEIGHT);
+    return new Scene(createUserContainer, CREATE_USER_WIDTH, CREATE_USER_HEIGHT);
 
   }
 
   private Scene createStudyTrackingScene(final Stage window) {
+    final int TRACKING_WIDTH = 1000;
+    final int TRACKING_HEIGHT = 900;
+
     // top menu section
     final HBox menuContainer = new HBox(15);
     menuContainer.setPadding(new Insets(10, 10, 10, 10));
@@ -412,10 +415,13 @@ public class StudyTrackerUi extends Application {
         studyTrackerBoardContainer);
     verticalContainer.setAlignment(Pos.CENTER);
     verticalContainer.setPadding(new Insets(30));
-    return new Scene(verticalContainer, SCENE_WIDTH, SCENE_HEIGHT);
+    return new Scene(verticalContainer, TRACKING_WIDTH, TRACKING_HEIGHT);
   }
 
   private Scene createNewCourseScene(final Stage window) {
+
+    final var NEW_COURSE_WIDTH = 400;
+    final var NEW_COURSE_HEIGHT = 600;
 
     final var CHOICE_1 = "Not started";
     final var CHOICE_2 = "Ongoing";
@@ -569,11 +575,11 @@ public class StudyTrackerUi extends Application {
     final var outerCourseCreationContainer = new BorderPane();
     outerCourseCreationContainer.setPadding(new Insets(CONTAINER_PADDING));
     outerCourseCreationContainer.setTop(newCourseFieldGroup);
-    outerCourseCreationContainer.setMargin(newCourseFieldGroup, new Insets(10, 0, 10, 0));
+    BorderPane.setMargin(newCourseFieldGroup, new Insets(10, 0, 10, 0));
     outerCourseCreationContainer.setCenter(statusContainer);
     outerCourseCreationContainer.setBottom(buttonContainer);
 
-    return new Scene(outerCourseCreationContainer, 400, 600);
+    return new Scene(outerCourseCreationContainer, NEW_COURSE_WIDTH, NEW_COURSE_HEIGHT);
 
   }
 
@@ -789,6 +795,9 @@ public class StudyTrackerUi extends Application {
   }
 
   private Circle createCircle() {
+
+    final double CIRCLE_RADIUS = 100;
+
     final var circle = new Circle(CIRCLE_RADIUS);
 
     circle.setStroke(Color.FORESTGREEN);
