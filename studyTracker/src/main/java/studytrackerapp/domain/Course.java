@@ -28,7 +28,7 @@ public class Course {
    * @param user         - the user the course belongs to
    */
 
-  public Course(String name, int credits, int isCompulsory, int status, User user) {
+  public Course(final String name, final int credits, final int isCompulsory, final int status, final User user) {
     this.name = name;
     this.credits = credits;
     this.isCompulsory = isCompulsory;
@@ -36,7 +36,8 @@ public class Course {
     this.user = user;
   }
 
-  public Course(String name, int credits, int isCompulsory, int status, int grade, User user) {
+  public Course(final String name, final int credits, final int isCompulsory, final int status, final int grade,
+      final User user) {
     this.name = name;
     this.credits = credits;
     this.isCompulsory = isCompulsory;
@@ -45,7 +46,7 @@ public class Course {
     this.grade = grade;
   }
 
-  public Course(String name, int credits, int isCompulsory, int status) {
+  public Course(final String name, final int credits, final int isCompulsory, final int status) {
     this.name = name;
     this.credits = credits;
     this.isCompulsory = isCompulsory;
@@ -56,7 +57,7 @@ public class Course {
     return status;
   }
 
-  public void setStatus(int status) {
+  public void setStatus(final int status) {
     this.status = status;
   }
 
@@ -64,7 +65,7 @@ public class Course {
     return this.name;
   }
 
-  public void setName(String name) {
+  public void setName(final String name) {
     this.name = name;
   }
 
@@ -72,7 +73,7 @@ public class Course {
     return this.credits;
   }
 
-  public void setCredits(int credits) {
+  public void setCredits(final int credits) {
     this.credits = credits;
   }
 
@@ -80,7 +81,7 @@ public class Course {
     return this.isCompulsory;
   }
 
-  public void setIsCompulsory(int isCompulsory) {
+  public void setIsCompulsory(final int isCompulsory) {
     this.isCompulsory = isCompulsory;
   }
 
@@ -88,7 +89,7 @@ public class Course {
     return this.user;
   }
 
-  public void setUser(User user) {
+  public void setUser(final User user) {
     this.user = user;
   }
 
@@ -96,18 +97,18 @@ public class Course {
     return this.grade;
   }
 
-  public void setGrade(int grade) {
+  public void setGrade(final int grade) {
     this.grade = grade;
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (o == this)
       return true;
     if (!(o instanceof Course)) {
       return false;
     }
-    Course course = (Course) o;
+    final Course course = (Course) o;
     return Objects.equals(name, course.name) && credits == course.credits && isCompulsory == course.isCompulsory
         && status == course.status && grade == course.grade && Objects.equals(user, course.user);
   }

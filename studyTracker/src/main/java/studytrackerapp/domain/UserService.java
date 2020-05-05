@@ -10,10 +10,10 @@ import studytrackerapp.dao.UserDao;
  */
 public class UserService {
 
-  private UserDao userDao;
+  private final UserDao userDao;
   private User currentlyLoggedIn;
 
-  public UserService(UserDao userDao) {
+  public UserService(final UserDao userDao) {
     this.userDao = userDao;
   }
 
@@ -26,9 +26,9 @@ public class UserService {
    * @throws SQLException
    */
 
-  public boolean login(String username, String password) throws SQLException {
+  public boolean login(final String username, final String password) throws SQLException {
     // attempt to fetch user
-    User user = userDao.read(username);
+    final User user = userDao.read(username);
 
     if (user == null) {
       return false;
@@ -88,15 +88,15 @@ public class UserService {
    * @return true if no issues in creating user
    * @throws SQLException
    */
-  public boolean createUser(String username, String name, String password, String programName, int targetCredits)
-      throws SQLException {
+  public boolean createUser(final String username, final String name, final String password, final String programName,
+      final int targetCredits) throws SQLException {
     // see if there exists a user with the same username
     if (userDao.read(username) != null) {
       System.out.println("Username taken.");
       return false;
     }
 
-    User user = userDao.create(new User(name, username, password, programName, targetCredits));
+    final User user = userDao.create(new User(name, username, password, programName, targetCredits));
 
     if (user != null) {
       System.out.println("The user: " + username + " was created!");

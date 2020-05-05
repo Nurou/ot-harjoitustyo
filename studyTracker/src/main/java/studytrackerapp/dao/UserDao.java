@@ -13,14 +13,14 @@ import studytrackerapp.domain.User;
  */
 public class UserDao implements Dao<User, String> {
 
-  private Database database;
+  private final Database database;
 
   /**
    * Constructs DAO for User objects and initializes User table in db
    *
    * @param database (database to be accessed)
    */
-  public UserDao(Database database) {
+  public UserDao(final Database database) {
     this.database = database;
   }
 
@@ -33,13 +33,13 @@ public class UserDao implements Dao<User, String> {
    */
 
   @Override
-  public User create(User user) throws SQLException {
+  public User create(final User user) throws SQLException {
     // define query
-    String sql = "INSERT INTO " + "User(username, name, password, program_name, target_credits ) "
+    final String sql = "INSERT INTO " + "User(username, name, password, program_name, target_credits ) "
         + "VALUES (?, ?, ?, ?, ?)";
 
-    Connection connection = database.getConnection();
-    PreparedStatement statement = connection.prepareStatement(sql);
+    final Connection connection = database.getConnection();
+    final PreparedStatement statement = connection.prepareStatement(sql);
     // set values
     statement.setString(1, user.getUsername());
     statement.setString(2, user.getName());
@@ -59,22 +59,22 @@ public class UserDao implements Dao<User, String> {
    * @throws SQLException
    */
   @Override
-  public User read(String username) throws SQLException {
+  public User read(final String username) throws SQLException {
     // object to hold the user, no user found by default
     User found = null;
 
     // define query
-    String sql = "SELECT username, name, password, program_name, target_credits FROM User WHERE username = ?";
+    final String sql = "SELECT username, name, password, program_name, target_credits FROM User WHERE username = ?";
 
     // attempt to form a connection
-    Connection connection = database.getConnection();
-    PreparedStatement statement = connection.prepareStatement(sql);
+    final Connection connection = database.getConnection();
+    final PreparedStatement statement = connection.prepareStatement(sql);
 
     // inject query params
     statement.setString(1, username);
 
     // execute query & store result
-    ResultSet resultSet = statement.executeQuery();
+    final ResultSet resultSet = statement.executeQuery();
 
     if (resultSet.isClosed())
       return null;
@@ -89,7 +89,7 @@ public class UserDao implements Dao<User, String> {
   }
 
   @Override
-  public User update(User user) {
+  public User update(final User user) {
     return null;
   }
 
@@ -99,7 +99,7 @@ public class UserDao implements Dao<User, String> {
   }
 
   @Override
-  public boolean delete(String key) {
+  public boolean delete(final String key) {
     return false;
   }
 

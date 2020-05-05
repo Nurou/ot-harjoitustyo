@@ -25,7 +25,8 @@ public class User {
    * @param target       - target number of credits for the user
    */
 
-  public User(String name, String username, String password, String studyProgram, int target) {
+  public User(final String name, final String username, final String password, final String studyProgram,
+      final int target) {
     this.name = name;
     this.username = username;
     this.password = password;
@@ -33,7 +34,7 @@ public class User {
     this.targetCredits = target;
   }
 
-  public User(String name, String username, String password) {
+  public User(final String name, final String username, final String password) {
     this.name = name;
     this.username = username;
     this.password = password;
@@ -43,7 +44,7 @@ public class User {
     return this.name;
   }
 
-  public void setName(String name) {
+  public void setName(final String name) {
     this.name = name;
   }
 
@@ -51,7 +52,7 @@ public class User {
     return this.username;
   }
 
-  public void setUsername(String username) {
+  public void setUsername(final String username) {
     this.username = username;
   }
 
@@ -59,7 +60,7 @@ public class User {
     return this.password;
   }
 
-  public void setPassword(String password) {
+  public void setPassword(final String password) {
     this.password = password;
   }
 
@@ -67,7 +68,7 @@ public class User {
     return this.studyProgram;
   }
 
-  public void setStudyProgram(String studyProgram) {
+  public void setStudyProgram(final String studyProgram) {
     this.studyProgram = studyProgram;
   }
 
@@ -75,43 +76,43 @@ public class User {
     return this.targetCredits;
   }
 
-  public void setTarget(int target) {
+  public void setTarget(final int target) {
     this.targetCredits = target;
   }
 
-  public User name(String name) {
+  public User name(final String name) {
     this.name = name;
     return this;
   }
 
-  public User username(String username) {
+  public User username(final String username) {
     this.username = username;
     return this;
   }
 
-  public User password(String password) {
+  public User password(final String password) {
     this.password = password;
     return this;
   }
 
-  public User studyProgram(String studyProgram) {
+  public User studyProgram(final String studyProgram) {
     this.studyProgram = studyProgram;
     return this;
   }
 
-  public User target(int target) {
+  public User target(final int target) {
     this.targetCredits = target;
     return this;
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (o == this)
       return true;
     if (!(o instanceof User)) {
       return false;
     }
-    User user = (User) o;
+    final User user = (User) o;
     return Objects.equals(name, user.name) && Objects.equals(username, user.username)
         && Objects.equals(password, user.password) && Objects.equals(studyProgram, user.studyProgram)
         && targetCredits == user.targetCredits;

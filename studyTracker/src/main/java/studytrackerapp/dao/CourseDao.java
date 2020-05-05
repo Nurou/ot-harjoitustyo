@@ -16,10 +16,10 @@ import studytrackerapp.domain.User;
 
 public class CourseDao implements Dao<Course, String> {
 
-  private Database database;
+  private final Database database;
   private User user;
 
-  public CourseDao(Database database) throws SQLException {
+  public CourseDao(final Database database) throws SQLException {
     this.database = database;
   }
 
@@ -28,7 +28,7 @@ public class CourseDao implements Dao<Course, String> {
    * @param user - user that the course is attached to
    */
 
-  public void setUser(User user) {
+  public void setUser(final User user) {
     this.user = user;
   }
 
@@ -50,12 +50,12 @@ public class CourseDao implements Dao<Course, String> {
    */
 
   @Override
-  public Course create(Course course) throws SQLException {
+  public Course create(final Course course) throws SQLException {
     // define query
-    String sql = "INSERT INTO Course(name, credits, compulsory, status, grade, username) VALUES (?, ?, ?, ?, ?, ?)";
+    final String sql = "INSERT INTO Course(name, credits, compulsory, status, grade, username) VALUES (?, ?, ?, ?, ?, ?)";
 
-    Connection connection = database.getConnection();
-    PreparedStatement statement = connection.prepareStatement(sql);
+    final Connection connection = database.getConnection();
+    final PreparedStatement statement = connection.prepareStatement(sql);
 
     // set values
     statement.setString(1, course.getName());
@@ -79,15 +79,15 @@ public class CourseDao implements Dao<Course, String> {
   @Override
   public List<Course> list() throws SQLException {
 
-    List<Course> courses = new ArrayList<>();
+    final List<Course> courses = new ArrayList<>();
 
-    String sql = "SELECT name, credits, compulsory, status, grade FROM Course WHERE username = ?";
+    final String sql = "SELECT name, credits, compulsory, status, grade FROM Course WHERE username = ?";
 
-    Connection connection = database.getConnection();
-    PreparedStatement statement = connection.prepareStatement(sql);
+    final Connection connection = database.getConnection();
+    final PreparedStatement statement = connection.prepareStatement(sql);
     System.out.println(this.user.getUsername());
     statement.setString(1, this.user.getUsername());
-    ResultSet resultSet = statement.executeQuery();
+    final ResultSet resultSet = statement.executeQuery();
 
     // checking if there are any results
     if (!resultSet.isBeforeFirst()) {
@@ -110,23 +110,26 @@ public class CourseDao implements Dao<Course, String> {
    * @return the course that was fetched from db
    */
   @Override
-  public Course read(String courseName) throws SQLException {
+  public Course read(final String courseName) throws SQLException {
     // object to hold the course, no course found by default
     Course found = null;
 
     // define query
-    String sql = "SELECT * FROM Course WHERE name = ? AND username = ?";
+    final String sql = "SELECT * FROM Course WHERE name = ? AND username = ?";
 
     // attempt to form a connection
-    Connection connection = database.getConnection();
-    PreparedStatement statement = connection.prepareStatement(sql);
+    final Connection connection = database.getConnection();
+    final PreparedStatement statement = connection.prepareStatement(sql);
 
     // inject query params
     statement.setString(1, courseName);
     statement.setString(2, this.user.getUsername());
 
     // execute query & store result
-    ResultSet resultSet = statement.executeQuery();
+    final ResultSet resultSet = statement.executeQuery();
+
+    if (!resultSet.isBeforeFirst())
+      return found;
 
     // create course
     found = new Course(resultSet.getString("name"), resultSet.getInt("credits"), resultSet.getInt("compulsory"),
@@ -142,11 +145,12 @@ public class CourseDao implements Dao<Course, String> {
    * @return the course if update successful, null otherwise
    */
   @Override
-  public Course update(Course course) throws SQLException {
-    String sql = "UPDATE Course SET status = ?, grade = ? WHERE username = ? AND name = ?";
+  public Course update(final Course course) throws SQLException {
+    final String sql = "UPDATE Course SET status = ?, grade = ? WHERE username = ? AND name = ?";
 
-    Connection connection = database.getConnection();
-    PreparedStatement statement = connection.prepareStatement(sql);
+    final Connection connection = database.getConnection();
+    final PreparedStatement statement = connection.prepareStatement(sql);
+
     statement.setInt(1, course.getStatus());
     statement.setInt(2, course.getGrade());
     statement.setString(3, this.user.getUsername());
@@ -158,13 +162,12 @@ public class CourseDao implements Dao<Course, String> {
   }
 
   @Override
-  public boolean delete(String courseName) throws SQLException {
-    String sql = "DELETE FROM Course WHERE name = ? AND username = ?";
+  public boolean delete(final String courseName) throws SQLException {
+    final String sql = "DELETE FROM Course WHERE name = ? AND username = ?";
 
-    Connection connection = database.getConnection();
-    PreparedStatement statement = connection.prepareStatement(sql);
+    final Connection connection = database.getConnection();
+    final PreparedStatement statement = connection.prepareStatement(sql);
 
-    // set value
     statement.setString(1, courseName);
     statement.setString(2, this.user.getUsername());
     statement.executeUpdate();

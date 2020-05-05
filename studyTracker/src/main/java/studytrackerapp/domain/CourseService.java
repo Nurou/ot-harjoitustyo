@@ -104,7 +104,7 @@ public class CourseService {
    */
   public Course changeCourseStatus(final String courseName, final int status) throws SQLException {
 
-    var course = courseDao.read(courseName);
+    final var course = courseDao.read(courseName);
     course.setStatus(status);
     return courseDao.update(course);
 
@@ -116,9 +116,9 @@ public class CourseService {
    * @param grade
    * @return course if update successful
    */
-  public Course changeCourseGrade(String courseName, int grade) throws SQLException {
+  public Course changeCourseGrade(final String courseName, final int grade) throws SQLException {
 
-    var course = courseDao.read(courseName);
+    final var course = courseDao.read(courseName);
     if (course.getStatus() == 2) {
       course.setGrade(grade);
       return courseDao.update(course);

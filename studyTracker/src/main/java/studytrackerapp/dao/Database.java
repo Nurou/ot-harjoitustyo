@@ -42,7 +42,7 @@ public class Database {
    * @param fileName (name of the database file as a string)
    */
 
-  public void createDatabase(String fileName) {
+  public void createDatabase(final String fileName) {
 
     Connection connection = null;
 
@@ -54,14 +54,14 @@ public class Database {
 
       createTables(connection);
 
-    } catch (Exception e) {
+    } catch (final Exception e) {
       System.err.println("Error: " + e.getMessage());
     } finally {
       this.setPath(fileName);
       if (connection != null)
         try {
           connection.close();
-        } catch (SQLException ex) {
+        } catch (final SQLException ex) {
           System.out.println(ex.getMessage());
         }
     }
@@ -75,30 +75,30 @@ public class Database {
    *                      tables
    * @return true if successful, false otherwise
    */
-  public boolean createTables(Connection connection) throws SQLException {
+  public boolean createTables(final Connection connection) throws SQLException {
 
-    String userTableSql = "CREATE TABLE IF NOT EXISTS User (username TEXT PRIMARY KEY, name TEXT, password TEXT, program_name TEXT, target_credits INTEGER)";
+    final String userTableSql = "CREATE TABLE IF NOT EXISTS User (username TEXT PRIMARY KEY, name TEXT, password TEXT, program_name TEXT, target_credits INTEGER)";
 
     try (Statement statement = connection.createStatement()) {
       statement.execute(userTableSql);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       System.err.println(e.getMessage());
       return false;
     }
 
-    String courseTableSql = "CREATE TABLE IF NOT EXISTS Course (id INTEGER PRIMARY KEY, name TEXT, credits INTEGER NOT NULL, compulsory INTEGER NOT NULL, status INTEGER NOT NULL, grade INTEGER, username TEXT NOT NULL, FOREIGN KEY (username) REFERENCES User (username));";
+    final String courseTableSql = "CREATE TABLE IF NOT EXISTS Course (id INTEGER PRIMARY KEY, name TEXT, credits INTEGER NOT NULL, compulsory INTEGER NOT NULL, status INTEGER NOT NULL, grade INTEGER, username TEXT NOT NULL, FOREIGN KEY (username) REFERENCES User (username));";
 
     try (Statement statement = connection.createStatement()) {
       statement.execute(courseTableSql);
 
-    } catch (Exception e) {
+    } catch (final Exception e) {
       System.err.println(e.getMessage());
       return false;
     }
     return true;
   }
 
-  public void setPath(String path) {
+  public void setPath(final String path) {
     this.path = path;
   }
 
