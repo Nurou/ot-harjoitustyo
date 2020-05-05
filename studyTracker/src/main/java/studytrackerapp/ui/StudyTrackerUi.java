@@ -299,9 +299,7 @@ public class StudyTrackerUi extends Application {
         createUserMessage.setFont(Font.font(null, FontWeight.BOLD, 18));
       } else if (userService.createUser(username, name, password, programName, Integer.parseInt(targetCredits))) {
         System.out.println("All good!");
-        createUserMessage.setText("Success!");
-        createUserMessage.setTextFill(Color.GREEN);
-        createUserMessage.setFont(Font.font(null, FontWeight.BOLD, 18));
+        createUserMessage.setText("");
         // clear fields
         newNameInput.clear();
         newUsernameInput.clear();
