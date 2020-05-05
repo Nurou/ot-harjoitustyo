@@ -48,25 +48,25 @@ public class CourseServiceTest {
   }
 
   @Test
-  public void courseCanBeCreated() {
+  public void courseCanBeCreated() throws SQLException {
     assertNotNull(courseService.retrieveUser());
     assertTrue(courseService.createCourse("test-course", 3, 1, 2));
   }
 
   @Test
-  public void courseAddedCanBeDeleted() {
+  public void courseAddedCanBeDeleted() throws SQLException {
     courseService.createCourse("test-course", 3, 1, 2);
     assertTrue(courseService.deleteCourse("test-course"));
   }
 
   @Test
-  public void nonExistentCourseCannotBeDeleted() {
+  public void nonExistentCourseCannotBeDeleted() throws SQLException {
     courseService.retrieveUser();
     assertFalse(courseService.deleteCourse("test-course"));
   }
 
   @Test
-  public void usersCoursesCanBeListed() {
+  public void usersCoursesCanBeListed() throws SQLException {
     courseService.createCourse("first course", 3, 1, 2);
     courseService.createCourse("second course", 3, 1, 2);
     assertEquals("first course", courseService.getCourses().get(0).getName());
@@ -74,12 +74,12 @@ public class CourseServiceTest {
   }
 
   @Test
-  public void noCoursesIfNoneAdded() {
+  public void noCoursesIfNoneAdded() throws SQLException {
     assertTrue(courseService.getCourses().isEmpty());
   }
 
   @Test
-  public void sameCourseCannotBeAddedTwiceForSameUser() {
+  public void sameCourseCannotBeAddedTwiceForSameUser() throws SQLException {
     assertTrue(courseService.createCourse("test-course", 3, 1, 2));
     courseService.getCourses();
     assertFalse(courseService.createCourse("test-course", 3, 1, 2));

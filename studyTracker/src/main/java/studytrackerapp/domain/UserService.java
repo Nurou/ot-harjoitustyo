@@ -1,5 +1,7 @@
 package studytrackerapp.domain;
 
+import java.sql.SQLException;
+
 import studytrackerapp.dao.UserDao;
 
 /**
@@ -21,9 +23,10 @@ public class UserService {
    * @param username - username input from the user
    * @param password - password input from the user
    * @return true if login successful, false if unsuccessful
+   * @throws SQLException
    */
 
-  public boolean login(String username, String password) {
+  public boolean login(String username, String password) throws SQLException {
     // attempt to fetch user
     User user = userDao.read(username);
 
@@ -42,6 +45,7 @@ public class UserService {
     this.currentlyLoggedIn = user;
     System.out.println();
     System.out.println(username + " has logged in.");
+
     return true;
   }
 
@@ -82,8 +86,10 @@ public class UserService {
    * @param programName   - programName of the new user's study program
    * @param targetCredits - targetCredits for the new user
    * @return true if no issues in creating user
+   * @throws SQLException
    */
-  public boolean createUser(String username, String name, String password, String programName, int targetCredits) {
+  public boolean createUser(String username, String name, String password, String programName, int targetCredits)
+      throws SQLException {
     // see if there exists a user with the same username
     if (userDao.read(username) != null) {
       System.out.println("Username taken.");

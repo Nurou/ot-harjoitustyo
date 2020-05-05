@@ -38,6 +38,7 @@ public class UserServiceTest {
     userService = new UserService(userDao);
 
     User user = new User("tester", "username", "testpass");
+
     userDao.create(user);
 
     System.out.println("Set up successful");
@@ -58,41 +59,43 @@ public class UserServiceTest {
   }
 
   @Test
-  public void userCanLogInWithValidCredentials() {
+  public void userCanLogInWithValidCredentials() throws SQLException {
     userService.login("username", "testpass");
     assertEquals("username", userService.getLoggedUser().getUsername());
     assertEquals("tester", userService.getLoggedUser().getName());
   }
 
   @Test
-  public void userCannotLogInWithInvalidCredentials() {
+  public void userCannotLogInWithInvalidCredentials() throws SQLException {
     assertFalse(userService.login("username", "wrong password"));
   }
 
   @Test
-  public void userCanBeLoggedOut() {
+  public void userCanBeLoggedOut() throws SQLException {
     userService.login("username", "testpass");
     assertTrue(userService.logout());
     assertNull(userService.getLoggedUser());
   }
 
   @Test
-  public void cannotLogOutAUserNotLoggedIn() {
+  public void cannotLogOutAUserNotLoggedIn() throws SQLException {
     assertFalse(userService.logout());
   }
 
   @Test
-  public void loggedUsersNameCanBeFetched() {
+  public void loggedUsersNameCanBeFetched() throws SQLException {
     var username = "unique";
     var name = "unique-username-guy";
     var password = "password";
+
     userService.createUser(username, name, password, "tkt", 180);
+
     userService.login(username, password);
     assertEquals("unique-username-guy", userService.getLoggedUser().getName());
   }
 
   @Test
-  public void canCreateNewUserWithUniqueUsername() {
+  public void canCreateNewUserWithUniqueUsername() throws SQLException {
     assertTrue(userService.createUser("unique", "unique-username-guy", "password", "tkt", 180));
     assertFalse(userService.createUser("unique", "non-unique-username-guy", "password", "tkt", 180));
   }

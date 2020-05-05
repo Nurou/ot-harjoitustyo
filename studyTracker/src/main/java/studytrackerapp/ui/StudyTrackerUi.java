@@ -291,25 +291,29 @@ public class StudyTrackerUi extends Application {
 
       System.out.println(targetCredits);
 
-      // credentials validation
-      if ((username.length() < MIN_USERNAME_LENGTH) || (name.length() < MIN_NAME_LENGTH)
-          || (password.length() < MIN_PASS_LENGTH)) {
-        createUserMessage.setText("Either the username, password, or name that was entered was too short.");
-        createUserMessage.setTextFill(Color.RED);
-        createUserMessage.setFont(Font.font(null, FontWeight.BOLD, 18));
-      } else if (userService.createUser(username, name, password, programName, Integer.parseInt(targetCredits))) {
-        System.out.println("All good!");
-        createUserMessage.setText("");
-        // clear fields
-        newNameInput.clear();
-        newUsernameInput.clear();
-        newPasswordInput.clear();
-        programNameInput.clear();
-        targetCreditsInput.clear();
-        window.setScene(loginScene);
-      } else {
-        createUserMessage.setText("A user with the username: '" + username + "' already exists.");
-        createUserMessage.setTextFill(Color.RED);
+      try {
+        // credentials validation
+        if ((username.length() < MIN_USERNAME_LENGTH) || (name.length() < MIN_NAME_LENGTH)
+            || (password.length() < MIN_PASS_LENGTH)) {
+          createUserMessage.setText("Either the username, password, or name that was entered was too short.");
+          createUserMessage.setTextFill(Color.RED);
+          createUserMessage.setFont(Font.font(null, FontWeight.BOLD, 18));
+        } else if (userService.createUser(username, name, password, programName, Integer.parseInt(targetCredits))) {
+          System.out.println("All good!");
+          createUserMessage.setText("");
+          // clear fields
+          newNameInput.clear();
+          newUsernameInput.clear();
+          newPasswordInput.clear();
+          programNameInput.clear();
+          targetCreditsInput.clear();
+          window.setScene(loginScene);
+        } else {
+          createUserMessage.setText("A user with the username: '" + username + "' already exists.");
+          createUserMessage.setTextFill(Color.RED);
+        }
+      } catch (final SQLException e4) {
+        createUserMessage.setText(e4.getMessage());
       }
 
     });
@@ -420,6 +424,8 @@ public class StudyTrackerUi extends Application {
     final var OPTION_1 = "Yes";
     final var OPTION_2 = "No";
 
+    final var creationStatus = new Label();
+
     // container for field group
     final var newCourseFieldGroup = new VBox();
     newCourseFieldGroup.setSpacing(10);
@@ -439,8 +445,8 @@ public class StudyTrackerUi extends Application {
     completionStatusChoice.setValue(CHOICE_1);
 
     // add fields to field group
-    newCourseFieldGroup.getChildren().addAll(courseNameLabel, courseNameInput, courseCreditsLabel, courseCreditsInput,
-        completionStatusLabel, completionStatusChoice);
+    newCourseFieldGroup.getChildren().addAll(creationStatus, courseNameLabel, courseNameInput, courseCreditsLabel,
+        courseCreditsInput, completionStatusLabel, completionStatusChoice);
 
     // horizontal container for checkbox selection - course mandatory or not
     final var statusContainer = new HBox();
@@ -528,19 +534,25 @@ public class StudyTrackerUi extends Application {
           break;
       }
 
-      if (courseService.createCourse(name, credits, compulsoryInteger, statusInt)) {
+      try {
 
-        // refresh data
-        redrawList();
-        updateProgress();
+        if (courseService.createCourse(name, credits, compulsoryInteger, statusInt)) {
 
-        // change view back to course manager
-        window.setScene(studyTrackingScene);
+          // refresh data
+          redrawList();
+          updateProgress();
 
-        // clear inputs
-        courseNameInput.clear();
-        // statusInput.clear();
-        courseCreditsInput.clear();
+          // change view back to course manager
+          window.setScene(studyTrackingScene);
+
+          // clear inputs
+          courseNameInput.clear();
+          // statusInput.clear();
+          courseCreditsInput.clear();
+        }
+
+      } catch (final SQLException error) {
+        creationStatus.setText(error.getMessage());
       }
 
     });
@@ -554,14 +566,14 @@ public class StudyTrackerUi extends Application {
     buttonContainer.getButtons().addAll(addCourseButton, returnButton);
 
     // place containers inside outer container
-    final var wrapperContainer = new BorderPane();
-    wrapperContainer.setPadding(new Insets(CONTAINER_PADDING));
-    wrapperContainer.setTop(newCourseFieldGroup);
-    wrapperContainer.setMargin(newCourseFieldGroup, new Insets(10, 0, 10, 0));
-    wrapperContainer.setCenter(statusContainer);
-    wrapperContainer.setBottom(buttonContainer);
+    final var outerCourseCreationContainer = new BorderPane();
+    outerCourseCreationContainer.setPadding(new Insets(CONTAINER_PADDING));
+    outerCourseCreationContainer.setTop(newCourseFieldGroup);
+    outerCourseCreationContainer.setMargin(newCourseFieldGroup, new Insets(10, 0, 10, 0));
+    outerCourseCreationContainer.setCenter(statusContainer);
+    outerCourseCreationContainer.setBottom(buttonContainer);
 
-    return new Scene(wrapperContainer, 400, 600);
+    return new Scene(outerCourseCreationContainer, 400, 600);
 
   }
 
@@ -597,7 +609,11 @@ public class StudyTrackerUi extends Application {
 
     final var deleteButton = new Button("Delete");
     deleteButton.setOnAction(e -> {
-      courseService.deleteCourse(courseName);
+      try {
+        courseService.deleteCourse(courseName);
+      } catch (SQLException e1) {
+        e1.printStackTrace();
+      }
       redrawList();
       updateProgress();
     });
@@ -677,9 +693,17 @@ public class StudyTrackerUi extends Application {
   private void updateProgress() {
     final var targetCredits = userService.getLoggedUser().getTarget();
     final var completedStatus = 2;
-    var userHasCourses = courseService.getCourses().isEmpty();
-    var userHasCompletedACourse = courseService.getCourses().stream().filter(c -> (c.getStatus() == 2)).findFirst()
-        .orElse(null) == null;
+    var userHasCourses = false;
+    var userHasCompletedACourse = false;
+    var currentCredits = 0;
+
+    try {
+      userHasCourses = courseService.getCourses().isEmpty();
+      userHasCompletedACourse = courseService.getCourses().stream().filter(c -> (c.getStatus() == 2)).findFirst()
+          .orElse(null) == null;
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
 
     // first need to check if user has any courses
     if (userHasCourses || userHasCompletedACourse) {
@@ -688,9 +712,13 @@ public class StudyTrackerUi extends Application {
       return;
     }
 
-    final var currentCredits = courseService.getCourses().stream()
-        .filter(course -> course.getStatus() == completedStatus).map(completed -> completed.getCredits())
-        .reduce(0, (totalCredits, courseCredits) -> totalCredits + courseCredits);
+    try {
+      currentCredits = courseService.getCourses().stream().filter(course -> course.getStatus() == completedStatus)
+          .map(completed -> completed.getCredits())
+          .reduce(0, (totalCredits, courseCredits) -> totalCredits + courseCredits);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
 
     final var currentProgressAsFraction = (double) currentCredits / targetCredits;
     System.out.println(currentProgressAsFraction);
@@ -701,11 +729,15 @@ public class StudyTrackerUi extends Application {
     var numerator = 0;
     var denominator = 0;
 
-    for (Course c : courseService.getCourses()) {
-      if (c.getGrade() == 0)
-        continue;
-      denominator += c.getCredits();
-      numerator += c.getCredits() * c.getGrade();
+    try {
+      for (Course c : courseService.getCourses()) {
+        if (c.getGrade() == 0)
+          continue;
+        denominator += c.getCredits();
+        numerator += c.getCredits() * c.getGrade();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
 
     if (denominator > 0) {
@@ -737,19 +769,23 @@ public class StudyTrackerUi extends Application {
     completedCourses.getChildren().clear();
 
     // add each course to the board based on status
-    courseService.getCourses().forEach(course -> {
-      switch (course.getStatus()) {
-        case 1:
-          ongoingCourses.getChildren().add(createCourseNode(course));
-          break;
-        case 2:
-          completedCourses.getChildren().add(createCourseNode(course));
-          break;
-        default:
-          backlogCourses.getChildren().add(createCourseNode(course));
-          break;
-      }
-    });
+    try {
+      courseService.getCourses().forEach(course -> {
+        switch (course.getStatus()) {
+          case 1:
+            ongoingCourses.getChildren().add(createCourseNode(course));
+            break;
+          case 2:
+            completedCourses.getChildren().add(createCourseNode(course));
+            break;
+          default:
+            backlogCourses.getChildren().add(createCourseNode(course));
+            break;
+        }
+      });
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 
   private Circle createCircle() {
@@ -788,27 +824,31 @@ public class StudyTrackerUi extends Application {
       final var password = passwordInput.getText();
 
       // attempt login...
-      if (userService.login(username, password)) {
-        // all good! Get user details
-        final var loggedUser = userService.getLoggedUser();
-        // assign user to courses
-        courseService.assignUser(loggedUser);
-        // welcome user
-        setLoginMessage();
-        // fetch stats
-        updateProgress();
-        // fetch their courses
-        redrawList();
+      try {
+        if (userService.login(username, password)) {
+          // all good! Get user details
+          final var loggedUser = userService.getLoggedUser();
+          // assign user to courses
+          courseService.assignUser(loggedUser);
+          // welcome user
+          setLoginMessage();
+          // fetch stats
+          updateProgress();
+          // fetch their courses
+          redrawList();
 
-        window.setScene(studyTrackingScene);
-      } else {
-        // login unsuccessful
-        loginStatusMessage
-            .setText("Invalid credentials, or the user: '  " + username + "' has not been created. Try again.");
+          window.setScene(studyTrackingScene);
+        } else {
+          // login unsuccessful
+          loginStatusMessage
+              .setText("Invalid credentials, or the user: '  " + username + "' has not been created. Try again.");
 
-        // display message
-        loginStatusMessage.setTextFill(Color.RED);
-        loginStatusMessage.setFont(Font.font(null, FontWeight.BOLD, 14));
+          // display message
+          loginStatusMessage.setTextFill(Color.RED);
+          loginStatusMessage.setFont(Font.font(null, FontWeight.BOLD, 14));
+        }
+      } catch (SQLException e1) {
+        e1.printStackTrace();
       }
       // reset fields
       usernameInput.clear();

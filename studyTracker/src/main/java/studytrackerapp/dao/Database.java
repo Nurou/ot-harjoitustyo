@@ -15,8 +15,10 @@ import java.sql.Statement;
 public class Database {
 
   private String path;
+  private Connection connection;
 
   public Database() {
+    this.connection = null;
   }
 
   /**
@@ -27,7 +29,10 @@ public class Database {
    */
 
   public Connection getConnection() throws SQLException {
-    return DriverManager.getConnection("jdbc:sqlite:" + path);
+    if (connection == null) {
+      connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+    }
+    return connection;
   }
 
   /**
@@ -53,13 +58,12 @@ public class Database {
       System.err.println("Error: " + e.getMessage());
     } finally {
       this.setPath(fileName);
-      try {
-        if (connection != null) {
+      if (connection != null)
+        try {
           connection.close();
+        } catch (SQLException ex) {
+          System.out.println(ex.getMessage());
         }
-      } catch (SQLException ex) {
-        System.out.println(ex.getMessage());
-      }
     }
   }
 

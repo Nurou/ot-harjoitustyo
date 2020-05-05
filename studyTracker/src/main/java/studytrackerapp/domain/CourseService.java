@@ -1,7 +1,6 @@
 package studytrackerapp.domain;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +44,8 @@ public class CourseService {
    * 
    * @return true if course was created, false otherwise
    */
-  public boolean createCourse(final String name, final int credits, final int isCompulsory, final int status) {
+  public boolean createCourse(final String name, final int credits, final int isCompulsory, final int status)
+      throws SQLException {
 
     for (final Course course : getCourses()) {
       if (course.getName().equals(name)) {
@@ -54,17 +54,11 @@ public class CourseService {
       }
     }
 
-    try {
-      final Course newCourse = courseDao.create(new Course(name, credits, isCompulsory, status));
+    final Course newCourse = courseDao.create(new Course(name, credits, isCompulsory, status));
 
-      if (newCourse != null) {
-        System.out.println("Course '" + name + "' added");
-        return true;
-      }
-
-    } catch (final Exception e) {
-      System.err.println("Error in adding course: " + e.getMessage());
-      return false;
+    if (newCourse != null) {
+      System.out.println("Course '" + name + "' added");
+      return true;
     }
 
     return false;
@@ -74,9 +68,10 @@ public class CourseService {
    * fetches all courses for a user through the Dao
    * 
    * @return list of courses
+   * @throws SQLException
    */
 
-  public List<Course> getCourses() {
+  public List<Course> getCourses() throws SQLException {
     return this.courseDao.list().stream().collect(Collectors.toList());
   }
 
@@ -84,20 +79,18 @@ public class CourseService {
    * 
    * @param course - name of the course to be deleted
    * @return true if successful, false if student studies no such course
+   * @throws SQLException
    */
 
-  public boolean deleteCourse(final String course) {
+  public boolean deleteCourse(final String course) throws SQLException {
 
     final var existingCourseNames = getCourses().stream().map(c -> c.getName()).collect(Collectors.toList());
+
     if (!existingCourseNames.contains(course)) {
       return false;
     }
 
-    try {
-      courseDao.delete(course);
-    } catch (final SQLException e) {
-      e.printStackTrace();
-    }
+    courseDao.delete(course);
 
     return true;
 
