@@ -15,7 +15,8 @@ These integration tests utilise the corresponding DAO interfaces.
 
 ### DAO Classes
 
-The DAO classes have been tested through the integration tests. The database class has been tested separately: [DatabaseTest](https://github.com/Nurou/studyTracker/blob/master/studyTracker/src/test/java/studytrackerapp/dao/DatabaseTest.java)
+The DAO classes have been tested through the integration tests. The [database test class](https://github.com/Nurou/studyTracker/blob/master/studyTracker/src/test/java/studytrackerapp/dao/DatabaseTest.java)
+has been tested separately.
 
 ### Test Coverage
 
