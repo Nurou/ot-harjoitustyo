@@ -1,4 +1,4 @@
-# 🍊 StudyTracker
+# 📚 StudyTracker
 
 StudyTracker is a desktop application that helps a student to keep track of their studies. The student can use it to monitor their overall progress through the help of a board.
 
