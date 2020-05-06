@@ -114,11 +114,6 @@ public class Course {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(name, credits, isCompulsory, status, grade, user);
-  }
-
-  @Override
   public String toString() {
     return "{" + " name='" + getName() + "'" + ", credits='" + getCredits() + "'" + ", isCompulsory='"
         + getIsCompulsory() + "'" + ", status='" + getStatus() + "'" + ", grade='" + getGrade() + "'" + ", user='"

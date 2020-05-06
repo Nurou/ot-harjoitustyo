@@ -119,11 +119,6 @@ public class User {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(name, username, password, studyProgram, targetCredits);
-  }
-
-  @Override
   public String toString() {
     return "{" + " name='" + getName() + "'" + ", username='" + getUsername() + "'" + ", password='" + getPassword()
         + "'" + ", studyProgram='" + getStudyProgram() + "'" + ", target='" + getTarget() + "'" + "}";

@@ -50,10 +50,8 @@ The image shows the connections between the links.
 The application could be improved by expanding it to have the ability to:
 
 - add notes to courses
-- display grade-point average
-- add links to courses that take the student to the course page online
-- set study targets for periods and academic years
-- keep removed courses in a trash bin
+- add links to courses that direct the student to course pages/resources
+- set more specific study targets, e.g. for periods and academic years
+- move courses to a trash bin and recover them
 - delete users
-- categorise courses by priority (using colours, for instance)
 - share the progress by generating a pdf, web link, etc.

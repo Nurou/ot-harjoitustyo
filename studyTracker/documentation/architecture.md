@@ -51,10 +51,9 @@ The application stores user and course data into a single database file called t
 
 Each DAO represents a table in the database. The statements used to create the tables can be viewed [here](https://github.com/Nurou/ot-harjoitustyo/blob/master/studyTracker/documentation/misc/create-table-statements).
 
-
 ## Main Features
 
-The following sequence diagrams demonstrate the main elements of the application's logic. The general flow involves an event being triggered in the user interface causing a service-class method to be invoked, which then interacts with a DAO class as necessary. Any data fetched from the database through the DAO then flows back in the reverse direction. 
+The following sequence diagrams demonstrate the main elements of the application's logic. The general flow involves an event being triggered in the user interface causing a service-class method to be invoked, which then interacts with a DAO class as necessary. Any data fetched from the database through the DAO then flows back in the reverse direction.
 
 ### User Login
 
@@ -62,17 +61,15 @@ When the button for logging in is clicked, the following sequence occurs:
 
 ![](https://github.com/Nurou/studyTracker/blob/master/studyTracker/documentation/images/login-sequence.png).
 
-
 ### New User Creation
 
 When the button for creating a new user is clicked, the following sequence occurs:
 
 ![](https://github.com/Nurou/studyTracker/blob/master/studyTracker/documentation/images/create-new-user-sequence.png).
 
-
 ### Adding Courses
 
-New courses can be added by clicking the button for adding courses on the main view, which opens up a dedicated view for the process. The following sequence occurs when course details are provided and the _add course_ button is clicked: 
+New courses can be added by clicking the button for adding courses on the main view, which opens up a dedicated view for the process. The following sequence occurs when course details are provided and the _add course_ button is clicked:
 
 ![](https://github.com/Nurou/studyTracker/blob/master/studyTracker/documentation/images/add-course-sequence.png).
 
@@ -81,9 +78,10 @@ A similar sequence of logic occurs for the rest of the functionality of the appl
 ## Remaining Structural Weaknesses
 
 ### UI
-The UI implementation is implemented in its entirety in the StudyTrackerUi class. A cleaner and more maintanable soltuion would be to refactor the application to use FXML, or at least seperate the current class into smaller ones.
 
-Inline CSS has been mixed with JavaFX styling, which is an inconsistent approach. More optimally, there would be separate stylesheets that take care of all the layout needs of the application. 
+The UI implementation is implemented in its entirety in the StudyTrackerUi class. A cleaner and more maintainable solution would be to refactor the application to use FXML, or at least separate the current class into smaller ones.
+
+Inline CSS has been mixed with JavaFX styling, which is an inconsistent approach. More optimally, there would be separate stylesheets that take care of all the layout needs of the application.
 
 The UI has also not been tested, and is skipped in checkstyle tests.
 
@@ -93,4 +91,4 @@ Testing of the DAO classes could have been automated. Also, error handling could
 
 ### Tests
 
-The tests could perhaps have been more extensive and covered more unexpected events. More importantly, the tests could have been automated.
+The tests could have been more extensive and covered edgier cases.

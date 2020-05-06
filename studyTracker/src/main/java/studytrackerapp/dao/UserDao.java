@@ -28,7 +28,7 @@ public class UserDao implements Dao<User, String> {
    * @param user - the user to be mirrored in the db
    * @return User - the User object provided as an argument, null if user could
    *         not be created
-   * @throws SQLException
+   * @throws SQLException if there was an issue inserting a user to the db
    * 
    */
 
@@ -56,7 +56,7 @@ public class UserDao implements Dao<User, String> {
    *
    * @param username - this is the primary key in the db
    * @return User object if found in database, null otherwise
-   * @throws SQLException
+   * @throws SQLException if there was an issue reading a user from the db
    */
   @Override
   public User read(final String username) throws SQLException {
