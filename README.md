@@ -2,7 +2,7 @@
 
 StudyTracker is a desktop application that helps a student to keep track of their studies. The student can use it to monitor their overall progress through the help of a board.
 
-It's built with Java, and uses the JavaFX library for the UI and SQLite for data persistance.
+It's built with Java, JavaFX and SQLite.
 
 ## Documentation
 
